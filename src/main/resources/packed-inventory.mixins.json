@@ -4,6 +4,7 @@
   "package": "dev.kir.packedinventory.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "ItemStackMixin",
     "HandledScreenMixin"
   ],
   "injectors": {
