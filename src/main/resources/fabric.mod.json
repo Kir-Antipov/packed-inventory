@@ -22,6 +22,12 @@
     "client": [
       "dev.kir.packedinventory.PackedInventory"
     ],
+    "packed-inventory": [
+      "dev.kir.packedinventory.PackedInventory"
+    ],
+    "packed-inventory-client": [
+      "dev.kir.packedinventory.PackedInventory"
+    ],
     "modmenu": [
       "dev.kir.packedinventory.compat.modmenu.ModMenuCompat"
     ]
