@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "packed-inventory",
+  "version": "${version}",
+  "name": "Packed Inventory",
+  "description": "Inventory management has never been so easy.",
+  "authors": [
+    "Kir_Antipov"
+  ],
+  "contact": {
+    "website": "https://github.com/Kir-Antipov/packed-inventory",
+    "sources": "https://github.com/Kir-Antipov/packed-inventory",
+    "issues": "https://github.com/Kir-Antipov/packed-inventory/issues/new/choose"
+  },
+  "license": "MIT",
+  "icon": "assets/packed-inventory/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.kir.packedinventory.PackedInventory"
+    ],
+    "client": [
+      "dev.kir.packedinventory.PackedInventory"
+    ]
+  },
+  "mixins": [
+    "packed-inventory.mixins.json"
+  ],
+  "custom": {
+    "modmanager": {
+      "modrinth": "ofS5nIjw",
+      "curseforge": 641196
+    }
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "${minecraft}",
+    "java": ">=17"
+  },
+  "suggests": {
+    "fabric": "*",
+    "cloth-config": "${cloth_config}",
+    "modmenu": "${modmenu}"
+  }
+}
