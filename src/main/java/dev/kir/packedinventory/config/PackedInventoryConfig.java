@@ -5,4 +5,7 @@ import dev.kir.packedinventory.compat.cloth.PackedInventoryClothConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
 public interface PackedInventoryConfig extends PackedInventoryApiConfig {
+    static PackedInventoryConfig resolve() {
+        return PackedInventoryConfigImpl.getInstance();
+    }
 }
