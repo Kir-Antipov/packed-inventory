@@ -21,6 +21,9 @@
     ],
     "client": [
       "dev.kir.packedinventory.PackedInventory"
+    ],
+    "modmenu": [
+      "dev.kir.packedinventory.compat.modmenu.ModMenuCompat"
     ]
   },
   "mixins": [
