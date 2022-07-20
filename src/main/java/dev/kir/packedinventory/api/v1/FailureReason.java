@@ -2,7 +2,6 @@ package dev.kir.packedinventory.api.v1;
 
 import dev.kir.packedinventory.PackedInventory;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -56,6 +55,6 @@ public interface FailureReason {
      * @return New {@link FailureReason} instance that uses the given translatable description.
      */
     static FailureReason translate(String key) {
-        return FailureReason.create(new TranslatableText(key));
+        return FailureReason.create(Text.translatable(key));
     }
 }

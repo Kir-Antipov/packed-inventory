@@ -20,7 +20,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
@@ -63,7 +62,7 @@ public final class ModMenuCompat implements ModMenuApi {
 
         registry.registerAnnotationProvider(
             (i18n, field, config, defaults, guiProvider) -> Collections.singletonList(
-                entryBuilder.startSubCategory(new TranslatableText(i18n), getChildren(i18n, field, config, defaults, guiProvider))
+                entryBuilder.startSubCategory(Text.translatable(i18n), getChildren(i18n, field, config, defaults, guiProvider))
                     .setExpanded(field.getAnnotation(ConfigEntry.Gui.CollapsibleObject.class).startExpanded())
                     .build()
             ),
@@ -74,8 +73,8 @@ public final class ModMenuCompat implements ModMenuApi {
         registry.registerTypeProvider(
             (i18n, field, config, defaults, registry1) -> Collections.singletonList(
                 entryBuilder
-                    .startTextField(new TranslatableText(i18n), Utils.getUnsafely(field, config).toString())
-                    .setErrorSupplier(s -> Optional.ofNullable(Identifier.tryParse(s) == null ? new TranslatableText("text.cloth-config.error.not_valid_identifier") : null))
+                    .startTextField(Text.translatable(i18n), Utils.getUnsafely(field, config).toString())
+                    .setErrorSupplier(s -> Optional.ofNullable(Identifier.tryParse(s) == null ? Text.translatable("text.cloth-config.error.not_valid_identifier") : null))
                     .setDefaultValue(() -> Utils.getUnsafely(field, config).toString())
                     .setSaveConsumer(s -> Utils.setUnsafely(field, config, Identifier.tryParse(s)))
                     .build()
@@ -89,7 +88,7 @@ public final class ModMenuCompat implements ModMenuApi {
 
             return Collections.singletonList(
                     new NestedListListEntry<Object, MultiElementListEntry<Object>>(
-                        new TranslatableText(i18n),
+                        Text.translatable(i18n),
                         map.entrySet().stream().map(x -> KeyValuePair.of(x.getKey(), x.getValue())).collect(Collectors.toCollection(ArrayList::new)),
                         false,
                         null,
@@ -106,7 +105,7 @@ public final class ModMenuCompat implements ModMenuApi {
                                 elem = map.getDefaultEntry();
                             }
                             Map.Entry<Object, Object> defaultValue = KeyValuePair.of(((Map.Entry<Object, Object>)elem).getKey(), Utils.constructUnsafely(((Map.Entry<Object, Object>)elem).getValue().getClass()));
-                            return new MultiElementListEntry<>(new TranslatableText(classI13n), elem, (List)getChildren(classI13n, elem, defaultValue, registry1), true);
+                            return new MultiElementListEntry<>(Text.translatable(classI13n), elem, (List)getChildren(classI13n, elem, defaultValue, registry1), true);
                         }
                     )
             );
@@ -117,7 +116,7 @@ public final class ModMenuCompat implements ModMenuApi {
                 DefaultedDyeColor[] enums = DefaultedDyeColor.values();
                 return Collections.singletonList(
                     entryBuilder.startSelector(
-                        new TranslatableText(i18n),
+                        Text.translatable(i18n),
                         enums,
                         DefaultedDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults)))
                     )
@@ -134,7 +133,7 @@ public final class ModMenuCompat implements ModMenuApi {
                 List<DefaultedDyeColor> enums = Arrays.asList(DefaultedDyeColor.values());
                 return Collections.singletonList(
                         entryBuilder.startDropdownMenu(
-                            new TranslatableText(i18n),
+                            Text.translatable(i18n),
                             DropdownMenuBuilder.TopCellElementBuilder.of(
                                 DefaultedDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults))),
                                 str -> {
