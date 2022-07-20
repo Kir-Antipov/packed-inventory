@@ -134,7 +134,7 @@ public class PackedInventoryClothConfig implements PackedInventoryConfig, Config
                 }
 
                 configHolder.setConfigEntry(entry.getValue());
-                configSectionData.getSerializedValues().put(entry.getKey().toString(), JsonParser.parseString(configHolder.toJson()));
+                configSectionData.getSerializedValues().put(entry.getKey().toString(), new JsonParser().parse(configHolder.toJson()));
             }
         }
     }

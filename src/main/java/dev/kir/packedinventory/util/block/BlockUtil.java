@@ -36,8 +36,12 @@ public final class BlockUtil {
 
     static {
         Map<DyeColor, float[]> dyeColors = Arrays.stream(DyeColor.values()).collect(Collectors.toMap(x -> x, x -> ColorUtil.RGB2LAB(x.getColorComponents())));
-        for (int i = 0; i < 64; ++i) {
-            MapColor mapColor = MapColor.get(i);
+        for (int i = 0; i < MapColor.COLORS.length; ++i) {
+            MapColor mapColor = MapColor.COLORS[i];
+            if (mapColor == null) {
+                continue;
+            }
+
             float[] lab = ColorUtil.RGB2LAB(ColorUtil.toRGB(mapColor.color));
             DyeColor dyeColor = dyeColors.keySet().stream().map(x -> new Pair<>(x, ColorUtil.computeXYZDistance(lab, dyeColors.get(x)))).min(Comparator.comparingDouble(Pair::getRight)).map(Pair::getLeft).orElse(DyeColor.WHITE);
             COLORS.put(mapColor, dyeColor);

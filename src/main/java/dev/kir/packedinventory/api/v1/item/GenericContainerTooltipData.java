@@ -8,7 +8,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -58,9 +57,13 @@ public class GenericContainerTooltipData implements TooltipData {
      */
     protected GenericContainerTooltipData(Inventory inventory, int rows, int columns, @Nullable DyeColor color) {
         this.inventory = inventory;
-        this.columns = columns < 0 ? rows < 0 ? computeColumns(inventory) : Math.max(MathHelper.ceilDiv(inventory.size(), rows), 1) : columns;
-        this.rows = rows < 0 ? Math.max(MathHelper.ceilDiv(inventory.size(), this.columns), 1) : rows;
+        this.columns = columns < 0 ? rows < 0 ? computeColumns(inventory) : Math.max(ceilDiv(inventory.size(), rows), 1) : columns;
+        this.rows = rows < 0 ? Math.max(ceilDiv(inventory.size(), this.columns), 1) : rows;
         this.color = color;
+    }
+
+    private static int ceilDiv(int a, int b) {
+        return a / b + (a % b == 0 ? 0 : 1);
     }
 
     /**
@@ -101,7 +104,7 @@ public class GenericContainerTooltipData implements TooltipData {
             return hotbarSize;
         }
         int columns = Math.max((int)Math.sqrt(size), 1);
-        int rows = Math.max(MathHelper.ceilDiv(inventory.size(), columns), 1);
+        int rows = Math.max(ceilDiv(inventory.size(), columns), 1);
         return Math.max(columns, rows);
     }
 

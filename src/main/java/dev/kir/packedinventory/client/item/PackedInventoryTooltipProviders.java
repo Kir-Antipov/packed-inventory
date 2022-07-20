@@ -110,7 +110,7 @@ public final class PackedInventoryTooltipProviders {
                     }
 
                     FilledMapTooltipConfig cfg = config.getTooltipConfigOrDefault(Items.FILLED_MAP, FilledMapTooltipConfig.DEFAULT);
-                    return new FilledMapTooltipData(stack, context.getPlayer().getWorld(), cfg.isCompact(), cfg.size());
+                    return new FilledMapTooltipData(stack, context.getPlayer().world, cfg.isCompact(), cfg.size());
                 })
                 .build(),
             Items.FILLED_MAP

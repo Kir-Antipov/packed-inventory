@@ -119,19 +119,19 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
     protected abstract NbtCompound createNbtWithIdentifyingData();
 
     protected Optional<NbtList> getItemList() {
-        NbtCompound nbt = BlockItem.getBlockEntityNbt(this.stack);
+        NbtCompound nbt = this.stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
         return nbt == null || !nbt.contains(InventoryUtil.ITEMS_KEY, NbtElement.LIST_TYPE) ? Optional.empty() : Optional.of(nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE));
     }
 
     protected void removeItemListIfEmpty() {
-        NbtCompound nbt = BlockItem.getBlockEntityNbt(this.stack);
+        NbtCompound nbt = this.stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
         if (nbt != null && (!nbt.contains(InventoryUtil.ITEMS_KEY, NbtElement.LIST_TYPE) || nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE).size() == 0)) {
             this.stack.removeSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
         }
     }
 
     protected NbtList getRequiredItemList() {
-        NbtCompound nbt = BlockItem.getBlockEntityNbt(this.stack);
+        NbtCompound nbt = this.stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
         if (nbt == null) {
             nbt = this.createNbtWithIdentifyingData();
             this.stack.setSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY, nbt);

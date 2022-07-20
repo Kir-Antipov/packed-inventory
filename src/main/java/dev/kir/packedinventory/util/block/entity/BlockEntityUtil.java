@@ -69,7 +69,7 @@ public final class BlockEntityUtil {
                 String id = Registry.ITEM.getId(relevantItem).toString();
                 initializer = nbt -> nbt.putString("id", id);
             } else {
-                initializer = x -> x.copyFrom(be.createNbtWithIdentifyingData());
+                initializer = x -> x.copyFrom(be.toInitialChunkDataNbt());
             }
             BLOCK_ENTITY_NBT_INITIALIZERS.put(blockEntityType, initializer);
         }

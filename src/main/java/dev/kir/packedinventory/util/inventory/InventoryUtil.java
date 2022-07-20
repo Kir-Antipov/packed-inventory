@@ -108,7 +108,7 @@ public final class InventoryUtil {
     }
 
     private static @Nullable NbtList getItemsList(ItemStack stack) {
-        NbtCompound nbt = BlockItem.getBlockEntityNbt(stack);
+        NbtCompound nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
         NbtList list = nbt == null ? null : nbt.contains(ITEMS_KEY) ? nbt.getList(ITEMS_KEY, NbtElement.COMPOUND_TYPE) : null;
         if (list != null) {
             return list;
