@@ -37,6 +37,10 @@ public final class InventoryValidators {
      */
     public static final InventoryViewer.Validator EMPTY = InventoryViewer.Validator.EMPTY;
     /**
+     * Passes when the selected item stack consists of only one item.
+     */
+    public static final InventoryViewer.Validator SINGLE_ITEM = (inv, slot, player) -> inv.getStack(slot).getCount() == 1 ? null : FailureReason.STACK_CONSISTS_OF_MORE_THAN_ONE_ITEM;
+    /**
      * Passes when player is on the ground.
      */
     public static final InventoryViewer.Validator IS_ON_GROUND = (inv, slot, player) -> player.isOnGround() ? null : FailureReason.PLAYER_IS_NOT_ON_THE_GROUND;

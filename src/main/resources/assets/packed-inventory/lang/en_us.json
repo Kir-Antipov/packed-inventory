@@ -4,6 +4,7 @@
   "key.packed-inventory.invert_tooltip_visibility": "Invert tooltip visibility (hold)",
   "key.packed-inventory.invert_tooltip_compact_mode": "Invert tooltip compact mode (hold)",
 
+  "event.packed-inventory.failure.stack_consists_of_more_than_one_item": "It is not possible to edit more than one inventory at a time",
   "event.packed-inventory.failure.player_is_not_on_the_ground": "You should be on the ground in order to perform this action",
   "event.packed-inventory.failure.player_is_not_in_the_creative_mode": "You should be in the creative mode in order to perform this action",
   "event.packed-inventory.failure.player_needs_pickaxe_enchanted_with_silk_touch_enchantment": "You need a pickaxe enchanted with silk touch enchantment",

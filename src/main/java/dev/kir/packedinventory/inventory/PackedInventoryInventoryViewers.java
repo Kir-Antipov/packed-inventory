@@ -38,10 +38,11 @@ public final class PackedInventoryInventoryViewers {
 
         InventoryViewer.Validator isEnabled = InventoryValidators.config(Items.SHULKER_BOX, config, ValidationConfig.DEFAULT, ValidationConfig::isEnabled);
         InventoryViewer.Validator isInCreative = InventoryValidators.config(Items.SHULKER_BOX, config, GenericValidationConfig.DEFAULT, GenericValidationConfig::isSuppressedInCreative).and(InventoryValidators.IS_IN_CREATIVE);
+        InventoryViewer.Validator isSingleItem = InventoryValidators.SINGLE_ITEM;
         InventoryViewer.Validator isOnGround = InventoryValidators.config(Items.SHULKER_BOX, config, GenericValidationConfig.DEFAULT, x -> !x.requiresPlayerOnGround()).or(InventoryValidators.IS_ON_GROUND);
         return registry.register(
             (inventory, slot, player) -> NbtItemsInventory.create(inventory, slot, player, ShulkerBoxScreenHandler::new),
-            isEnabled.and(isInCreative.or(isOnGround)),
+            isEnabled.and(isInCreative.or(isSingleItem.and(isOnGround))),
             Stream.concat(Arrays.stream(DyeColor.values()), Stream.of((DyeColor)null)).map(ShulkerBoxBlock::get).map(Block::asItem).toList()
         );
     }

@@ -15,6 +15,10 @@ public interface FailureReason {
      */
     FailureReason OTHER_PROBLEM = () -> null;
     /**
+     * The item stack should consist of only one item in order to proceed.
+     */
+    FailureReason STACK_CONSISTS_OF_MORE_THAN_ONE_ITEM = FailureReason.translate("event." + PackedInventory.MOD_ID + ".failure.stack_consists_of_more_than_one_item");
+    /**
      * Player should be on the ground in order to proceed.
      */
     FailureReason PLAYER_IS_NOT_ON_THE_GROUND = FailureReason.translate("event." + PackedInventory.MOD_ID + ".failure.player_is_not_on_the_ground");
