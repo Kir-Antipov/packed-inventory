@@ -9,7 +9,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,7 +92,7 @@ public interface SyncedTooltipProvider<TTooltipSyncData extends TooltipSyncData>
      * @return {@code true} if the given {@link ItemStack} should be synchronized; otherwise, {@code false}.
      */
     default boolean shouldSync(ItemStack stack) {
-        return Instant.now().toEpochMilli() - this.getLastSyncTime(stack) >= this.getSyncInterval(stack);
+        return System.currentTimeMillis() - this.getLastSyncTime(stack) >= this.getSyncInterval(stack);
     }
 
     /**
