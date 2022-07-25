@@ -1,4 +1,4 @@
-package dev.kir.packedinventory.input;
+package dev.kir.packedinventory.client.input;
 
 import dev.kir.packedinventory.PackedInventory;
 import dev.kir.packedinventory.api.v1.networking.PackedInventoryEditRequest;

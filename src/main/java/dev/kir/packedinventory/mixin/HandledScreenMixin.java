@@ -1,8 +1,8 @@
 package dev.kir.packedinventory.mixin;
 
 import dev.kir.packedinventory.api.v1.networking.PackedInventoryEditRequest;
-import dev.kir.packedinventory.input.PackedInventoryKeyBindings;
-import dev.kir.packedinventory.util.input.InputUtil;
+import dev.kir.packedinventory.client.input.PackedInventoryKeyBindings;
+import dev.kir.packedinventory.util.client.input.KeyBindingUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -44,7 +44,7 @@ abstract class HandledScreenMixin extends Screen {
             this.initialMouseY = this.client == null ? 0 : this.client.mouse.getY();
         }
 
-        if (this.focusedSlot == null || !InputUtil.isKeyBindingPressed(PackedInventoryKeyBindings.OPEN_EDIT_SCREEN)) {
+        if (this.focusedSlot == null || !KeyBindingUtil.isKeyBindingPressed(PackedInventoryKeyBindings.OPEN_EDIT_SCREEN)) {
             return;
         }
 

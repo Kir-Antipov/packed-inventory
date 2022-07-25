@@ -1,5 +1,6 @@
-package dev.kir.packedinventory.input;
+package dev.kir.packedinventory.client.input;
 
+import dev.kir.packedinventory.util.client.input.KeyBindingUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -18,7 +19,7 @@ public abstract class InvokableKeyBinding extends KeyBinding {
             if (this.wasPressed()) {
                 this.invoke();
             }
-            dev.kir.packedinventory.util.input.InputUtil.stopPropagation(this);
+            KeyBindingUtil.stopPropagation(this);
         });
     }
 
