@@ -28,13 +28,27 @@ abstract class HandledScreenMixin extends Screen {
     @Shadow
     protected @Final ScreenHandler handler;
 
+    private Long firstRenderedAt;
+    private Double initialMouseX;
+    private Double initialMouseY;
+
     private HandledScreenMixin(Text title) {
         super(title);
     }
 
     @Inject(method = "render", at = @At("RETURN"))
     private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        if (this.firstRenderedAt == null) {
+            this.firstRenderedAt = System.currentTimeMillis();
+            this.initialMouseX = this.client == null ? 0 : this.client.mouse.getX();
+            this.initialMouseY = this.client == null ? 0 : this.client.mouse.getY();
+        }
+
         if (this.focusedSlot == null || !InputUtil.isKeyBindingPressed(PackedInventoryKeyBindings.OPEN_EDIT_SCREEN)) {
+            return;
+        }
+
+        if ((this.client == null || this.client.mouse.getX() == this.initialMouseX && this.client.mouse.getY() == this.initialMouseY) && System.currentTimeMillis() - this.firstRenderedAt < 500) {
             return;
         }
 
