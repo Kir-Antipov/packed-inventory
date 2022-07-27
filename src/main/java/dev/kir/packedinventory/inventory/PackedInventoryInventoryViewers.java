@@ -85,7 +85,7 @@ public final class PackedInventoryInventoryViewers {
         InventoryViewer.Validator isSingleItem = InventoryValidators.SINGLE_ITEM;
         InventoryViewer.Validator isOnGround = InventoryValidators.config(Items.SHULKER_BOX, config, GenericValidationConfig.DEFAULT, x -> !x.requiresPlayerOnGround()).or(InventoryValidators.IS_ON_GROUND);
         return registry.register(
-            (inventory, slot, player) -> NbtItemsInventory.create(inventory, slot, player, ShulkerBoxScreenHandler::new),
+            (inventory, slot, player) -> NbtItemsInventory.builder(inventory, slot, player).screenHandler(ShulkerBoxScreenHandler::new).isValid((x, nii) -> !(Block.getBlockFromItem(x.getItem()) instanceof ShulkerBoxBlock)).resolveDefaults().build(),
             isEnabled.and(isInCreative.or(isSingleItem.and(isOnGround))),
             Stream.concat(Arrays.stream(DyeColor.values()), Stream.of((DyeColor)null)).map(ShulkerBoxBlock::get).map(Block::asItem).toList()
         );
