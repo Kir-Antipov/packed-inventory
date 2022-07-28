@@ -1,6 +1,6 @@
 {
   "key.categories.packed-inventory": "Packed Inventory",
-  "key.packed-inventory.open_edit_screen": "Open edit screen",
+  "key.packed-inventory.interact_with_item": "Interact with an item",
   "key.packed-inventory.invert_tooltip_visibility": "Invert tooltip visibility (hold)",
   "key.packed-inventory.invert_tooltip_compact_mode": "Invert tooltip compact mode (hold)",
 
