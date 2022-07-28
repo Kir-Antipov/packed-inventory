@@ -21,6 +21,16 @@ public interface InventoryViewerRegistry {
         return InventoryViewerRegistryImpl.INSTANCE;
     }
 
+    /**
+     * Returns {@code true} if the selected {@code slot} contains an inventory view; otherwise, {@code false}.
+     * @param inventory Inventory.
+     * @param slot Inventory slot.
+     * @param player Player.
+     * @return {@code true} if the selected {@code slot} contains an inventory view; otherwise, {@code false}.
+     */
+    default boolean hasView(Inventory inventory, int slot, PlayerEntity player) {
+       return this.forceView(inventory, slot, player).isPresent();
+    }
 
     /**
      * Opens an inventory view at the selected {@code slot} within the target {@code inventory} ignoring all validation rules.

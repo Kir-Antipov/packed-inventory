@@ -28,6 +28,11 @@ final class InventoryViewerRegistryImpl implements InventoryViewerRegistry {
     }
 
     @Override
+    public boolean hasView(Inventory inventory, int slot, PlayerEntity player) {
+        return this.findViewerEntry(inventory, slot, player) != null;
+    }
+
+    @Override
     public Optional<Either<Inventory, FailureReason>> view(Inventory inventory, int slot, PlayerEntity player) {
         Entry entry = this.findViewerEntry(inventory, slot, player);
         if (entry == null) {
