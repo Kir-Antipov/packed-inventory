@@ -1,5 +1,6 @@
 package dev.kir.packedinventory.screen;
 
+import dev.kir.packedinventory.util.inventory.InventoryUtil;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,13 +48,7 @@ public class ItemDamagingAnvilScreenHandler extends AnvilScreenHandler {
         }
 
         PlayerInventory inventory = this.player.getInventory();
-        int anvilIndex = -1;
-        for (int i = 0; i < inventory.size(); ++i) {
-            if (inventory.getStack(i) == this.anvil) {
-                anvilIndex = i;
-                break;
-            }
-        }
+        int anvilIndex = InventoryUtil.indexOf(inventory, this.anvil);
 
         BlockState anvilBlockState = ((BlockItem)this.anvil.getItem()).getBlock().getDefaultState();
         if (anvilIndex == -1 || !anvilBlockState.isIn(BlockTags.ANVIL) || !this.shouldBreak(this.player)) {
