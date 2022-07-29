@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Environment(EnvType.CLIENT)
 @Mixin(Screen.class)
 abstract class ScreenMixin {
-    @ModifyConstant(method = "renderTooltipFromComponents", constant = @Constant(intValue = 8, ordinal = 0))
+    @ModifyConstant(method = "renderTooltipFromComponents", constant = @Constant(intValue = 8, ordinal = 0), require = 0)
     private int fixTooltipRenderPosition(int constant) {
         return -1000000;
     }
