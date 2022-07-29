@@ -11,7 +11,7 @@ import dev.kir.packedinventory.api.v1.item.TooltipSyncDataProviderRegistry;
 import dev.kir.packedinventory.client.gui.tooltip.PackedInventoryTooltipComponents;
 import dev.kir.packedinventory.client.item.PackedInventoryTooltipProviders;
 import dev.kir.packedinventory.config.PackedInventoryConfig;
-import dev.kir.packedinventory.input.PackedInventoryKeyBindings;
+import dev.kir.packedinventory.client.input.PackedInventoryKeyBindings;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryValidationFailureHandlers;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryViewHandlers;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryViewers;

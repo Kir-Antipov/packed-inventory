@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ItemStack.class)
-public class ItemStackMixin {
+abstract class ItemStackMixin {
     @Inject(method = "getTooltipData", at = @At("RETURN"), cancellable = true)
     private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> cir) {
         ItemStack it = (ItemStack)(Object)this;

@@ -4,7 +4,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -106,7 +105,7 @@ public interface ItemStackComponentStorage<TComponent> {
             @Override
             public void attachComponent(ItemStack stack, TComponent component) {
                 this.component = component;
-                this.lastComponentUpdateTime = Instant.now().toEpochMilli();
+                this.lastComponentUpdateTime = System.currentTimeMillis();
             }
         };
     }
@@ -155,14 +154,14 @@ public interface ItemStackComponentStorage<TComponent> {
 
                 stack = this.getReferenceStack(stack);
                 this.components.put(stack, component);
-                this.updates.put(stack, Instant.now().toEpochMilli());
+                this.updates.put(stack, System.currentTimeMillis());
             }
 
             @Override
             public void detachComponent(ItemStack stack) {
                 stack = this.getReferenceStack(stack);
                 this.components.remove(stack);
-                this.updates.put(stack, Instant.now().toEpochMilli());
+                this.updates.put(stack, System.currentTimeMillis());
             }
         };
     }

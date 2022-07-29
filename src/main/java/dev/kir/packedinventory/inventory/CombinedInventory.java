@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public final class CombinedInventory implements Inventory {
     private final Collection<Inventory> inventories;
@@ -38,8 +39,12 @@ public final class CombinedInventory implements Inventory {
         return switch (inventories.size()) {
             case 0 -> EmptyInventory.getInstance();
             case 1 -> inventories.iterator().next();
-            default -> new CombinedInventory(inventories.stream().toList());
+            default -> new CombinedInventory(inventories.stream().flatMap(CombinedInventory::asStream).toList());
         };
+    }
+
+    public static Stream<Inventory> asStream(Inventory inventory) {
+        return inventory instanceof CombinedInventory ? ((CombinedInventory)inventory).inventories.stream() : Stream.of(inventory);
     }
 
     @Override

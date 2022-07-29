@@ -1,7 +1,7 @@
 package dev.kir.packedinventory.api.v1.config;
 
-import dev.kir.packedinventory.input.PackedInventoryKeyBindings;
-import dev.kir.packedinventory.util.input.InputUtil;
+import dev.kir.packedinventory.client.input.PackedInventoryKeyBindings;
+import dev.kir.packedinventory.util.client.input.KeyBindingUtil;
 
 /**
  * Base class for tooltip configurations.
@@ -59,13 +59,13 @@ public class TooltipConfig {
      * @return Flag that indicates whether tooltip visibility should be inverted or not.
      */
     public static boolean shouldInvertVisibility() {
-        return InputUtil.isKeyBindingPressed(PackedInventoryKeyBindings.INVERT_TOOLTIP_VISIBILITY);
+        return KeyBindingUtil.isKeyBindingPressed(PackedInventoryKeyBindings.INVERT_TOOLTIP_VISIBILITY);
     }
 
     /**
      * @return Flag that indicates whether tooltip visibility should be inverted or not.
      */
     public static boolean shouldInvertCompactMode() {
-        return InputUtil.isKeyBindingPressed(PackedInventoryKeyBindings.INVERT_TOOLTIP_COMPACT_MODE);
+        return KeyBindingUtil.isKeyBindingPressed(PackedInventoryKeyBindings.INVERT_TOOLTIP_COMPACT_MODE);
     }
 }

@@ -27,7 +27,7 @@ final class InventoryViewHandlerRegistryImpl implements InventoryViewHandlerRegi
     }
 
     private @Nullable Entry findHandler(Inventory inventory, Inventory parentInventory, int slot, PlayerEntity player) {
-        Entry entry = this.itemBasedHandlers.get(inventory.getStack(slot).getItem());
+        Entry entry = this.itemBasedHandlers.get(parentInventory.getStack(slot).getItem());
         if (entry != null && entry.getPredicate().test(inventory, parentInventory, slot, player)) {
             return entry;
         }
