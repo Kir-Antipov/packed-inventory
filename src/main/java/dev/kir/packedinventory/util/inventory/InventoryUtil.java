@@ -1,16 +1,22 @@
 package dev.kir.packedinventory.util.inventory;
 
+import dev.kir.packedinventory.inventory.CombinedInventory;
 import dev.kir.packedinventory.inventory.ListInventory;
 import dev.kir.packedinventory.util.block.entity.BlockEntityUtil;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+import java.util.function.BiPredicate;
 
 public final class InventoryUtil {
     public static final String ITEMS_KEY = "Items";
@@ -18,6 +24,35 @@ public final class InventoryUtil {
     public static final String SIZE_KEY = "Size";
     public static final String COUNT_KEY = "Count";
     public static final String BLOCK_ENTITY_TAG_KEY = "BlockEntityTag";
+
+    public static int indexOf(Inventory inventory, ItemStack stack) {
+        int size = inventory.size();
+        for (int i = 0; i < size; ++i) {
+            if (inventory.getStack(i) == stack) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int indexOf(Inventory inventory, BiPredicate<ItemStack, Integer> predicate) {
+        int size = inventory.size();
+        for (int i = 0; i < size; ++i) {
+            if (predicate.test(inventory.getStack(i), i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int lastIndexOf(Inventory inventory, BiPredicate<ItemStack, Integer> predicate) {
+        for (int i = inventory.size() - 1; i >= 0; --i) {
+            if (predicate.test(inventory.getStack(i), i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static boolean hasInventory(ItemStack stack) {
         NbtCompound blockEntityTag = stack.getSubNbt(BLOCK_ENTITY_TAG_KEY);
@@ -30,6 +65,64 @@ public final class InventoryUtil {
         }
 
         return false;
+    }
+
+    public static boolean isSameSlot(Inventory a, int aSlot, Inventory b, int bSlot) {
+        if (!(a instanceof CombinedInventory) && !(b instanceof CombinedInventory)) {
+            return Objects.equals(a, b) && aSlot == bSlot;
+        }
+
+        for (Inventory innerA : (Iterable<Inventory>)CombinedInventory.asStream(a)::iterator) {
+            if (aSlot < innerA.size()) {
+                a = innerA;
+                break;
+            }
+            aSlot -= innerA.size();
+        }
+
+        for (Inventory innerB : (Iterable<Inventory>)CombinedInventory.asStream(b)::iterator) {
+            if (bSlot < innerB.size()) {
+                b = innerB;
+                break;
+            }
+            bSlot -= innerB.size();
+        }
+        return InventoryUtil.isSameSlot(a, aSlot, b, bSlot);
+    }
+
+    public static boolean canInsert(Inventory inventory, int slot, ItemStack stack) {
+        return InventoryUtil.canInsert(inventory, slot, stack, null);
+    }
+
+    public static boolean canInsert(Inventory inventory, int slot, ItemStack stack, @Nullable Direction direction) {
+        if (inventory instanceof SidedInventory) {
+            return ((SidedInventory)inventory).canInsert(slot, stack, direction);
+        }
+        return inventory.isValid(slot, stack);
+    }
+
+    public static boolean canInsertOrCombine(Inventory inventory, int slot, ItemStack stack) {
+        return InventoryUtil.canInsertOrCombine(inventory, slot, stack, null);
+    }
+
+    public static boolean canInsertOrCombine(Inventory inventory, int slot, ItemStack stack, @Nullable Direction direction) {
+        ItemStack currentStack = inventory.getStack(slot);
+        if (!currentStack.isEmpty()) {
+            return ItemStack.canCombine(currentStack, stack) && (currentStack.getCount() + stack.getCount()) <= currentStack.getMaxCount();
+        }
+        return InventoryUtil.canInsert(inventory, slot, stack, direction);
+    }
+
+    public static boolean canInsertOrPartiallyCombine(Inventory inventory, int slot, ItemStack stack) {
+        return InventoryUtil.canInsertOrPartiallyCombine(inventory, slot, stack, null);
+    }
+
+    public static boolean canInsertOrPartiallyCombine(Inventory inventory, int slot, ItemStack stack, @Nullable Direction direction) {
+        ItemStack currentStack = inventory.getStack(slot);
+        if (!currentStack.isEmpty()) {
+            return ItemStack.canCombine(currentStack, stack) && currentStack.getCount() < currentStack.getMaxCount();
+        }
+        return InventoryUtil.canInsert(inventory, slot, stack, direction);
     }
 
     public static DefaultedList<ItemStack> getInventory(ItemStack stack) {

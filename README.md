@@ -17,13 +17,15 @@ Oh, also we have fancy tooltips for shulker boxes, ender chests, maps, and more!
 
  - Manage inventory of shulker boxes without ever placing them
  - Manage inventory of your ender chest without ever placing it
+ - Bundle-like functionality for inventory items that allows you to quickly suck items into/out of shulker boxes, ender chests, and so on
+ - Access crafting tables, stonecutters, and other workstations right from your inventory
  - Vanilla-like tooltips for shulker boxes
  - Vanilla-like tooltips for ender chests
  - Vanilla-like tooltips for filled maps
  - Vanilla-like tooltips for NBT-containing items acquired in Creative via `Ctrl + MMB` *(e.g., chests, barrels, furnaces, hoppers, dispensers, droppers, etc.)*
  - An extensive and simple API that helps other modders implement these features for their blocks and items
 
-Here are some examples for you:
+Here are some tooltip examples for you:
 
  - Container tooltip
  - Colored container tooltip
@@ -31,6 +33,18 @@ Here are some examples for you:
  - Filled map tooltip
 
 ![Preview](media/preview.png)
+
+As it was said before, inventory items *(e.g., shulker boxes, ender chests, and basically anything registered with the Packed Inventory API)* automatically obtain bundle-like functionality that allows you to quickly suck items into or out of them. To place items inside an inventory item, either
+ - pick up it in the inventory and press `Interact with an item` hotkey on the item(s) to be placed inside, or
+ - pick up the item(s) and press `Interact with an item` hotkey on the inventory item
+
+When placing inventory items inside another inventory item, the interface uses the first method: picking up Item A and pressing `Interact with an item` hotkey on Item B attempts to store Item B inside A.
+
+Inventory items can be used inside the inventory to take out the last item put in. In this way, items are accessible LIFO *(last in, first out)*.
+
+When used outside the inventory, it dumps all the items out into the world.
+
+![Bundle-like functionality for inventory items](media/quick_transfer-shulker_box.gif)
 
 More screenshots can be seen [here](media/).
 
@@ -47,7 +61,7 @@ Key binds can be configured just like vanilla ones:
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `Open edit screen` | Opens the edit screen for the selected item *(the one located in the active hotbar slot, if the inventory screen is not open; otherwise, the one the mouse is hovering over)* | `k` |
+| `Interact with an item` | Interacts with the selected item *(the one located in the active hotbar slot, if the inventory screen is not open; otherwise, the one the mouse is hovering over)*, i.e., either opens an edit screen for it, or tries to suck item(s) into or out of it, or drops its contents into the world | `k` |
 | `Invert tooltip visibility (hold)` | Inverts tooltip visibility while pressed | `Left Shift` |
 | `Invert tooltip compact mode (hold)` | Inverts tooltip compact mode while pressed | `c` |
 
@@ -165,7 +179,7 @@ dependencies {
 `gradle.properties`:
 
 ```properties
-packed_inventory_version=/* version (e.g., 0.1.0+1.18.2) */
+packed_inventory_version=/* version (e.g., 0.2.0+1.18.2) */
 ```
 
 You can find the current version of the API at the [Latest Release](https://github.com/Kir-Antipov/packed-inventory/releases/latest) page.

@@ -88,14 +88,14 @@ public final class NbtItemListUtil {
         }
     }
 
-    private static NbtCompound asCompound(ItemStack stack, int slot) {
+    public static NbtCompound asCompound(ItemStack stack, int slot) {
         NbtCompound nbt = new NbtCompound();
         nbt.putByte(InventoryUtil.SLOT_KEY, (byte)slot);
         stack.writeNbt(nbt);
         return nbt;
     }
 
-    private static ItemStack asItemStack(NbtCompound nbt) {
+    public static ItemStack asItemStack(NbtCompound nbt) {
         return ItemStack.fromNbt(nbt);
     }
 
