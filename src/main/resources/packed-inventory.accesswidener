@@ -1,2 +1,5 @@
 accessWidener v1 named
 
+extendable class net/minecraft/item/ItemStack
+accessible method net/minecraft/item/ItemStack isEqual (Lnet/minecraft/item/ItemStack;)Z
+extendable method net/minecraft/item/ItemStack isEqual (Lnet/minecraft/item/ItemStack;)Z
