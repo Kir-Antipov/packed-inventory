@@ -12,6 +12,10 @@ group = project.maven_group
 archivesBaseName = project.archives_base_name
 version = "${project.mod_version}${getVersionMetadata()}" as Object
 
+loom {
+    accessWidenerPath = file("src/main/resources/packed-inventory.accesswidener")
+}
+
 repositories {
     maven {
         name = "TerraformersMC"

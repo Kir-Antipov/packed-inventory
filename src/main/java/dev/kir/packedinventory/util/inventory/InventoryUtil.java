@@ -67,6 +67,21 @@ public final class InventoryUtil {
         return false;
     }
 
+    public static int firstIndexOf(Inventory parentInventory, Inventory targetInventory) {
+        if (Objects.equals(parentInventory, targetInventory)) {
+            return 0;
+        }
+
+        int currentIndex = 0;
+        for (Inventory innerInventory : (Iterable<Inventory>)CombinedInventory.asStream(parentInventory)::iterator) {
+            if (Objects.equals(targetInventory, innerInventory)) {
+                return currentIndex;
+            }
+            currentIndex += innerInventory.size();
+        }
+        return -1;
+    }
+
     public static boolean isSameSlot(Inventory a, int aSlot, Inventory b, int bSlot) {
         if (!(a instanceof CombinedInventory) && !(b instanceof CombinedInventory)) {
             return Objects.equals(a, b) && aSlot == bSlot;
