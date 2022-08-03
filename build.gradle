@@ -12,6 +12,10 @@ group = project.maven_group
 archivesBaseName = project.archives_base_name
 version = "${project.mod_version}${getVersionMetadata()}" as Object
 
+loom {
+    accessWidenerPath = file("src/main/resources/packed-inventory.accesswidener")
+}
+
 repositories {
     maven {
         name = "TerraformersMC"
@@ -50,7 +54,7 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand([
             "version": version,
-            "minecraft": ">=${minecraftDependencyVersion.replaceFirst(/^(\d+\.\d+)(\.\d+|)$/, '$1')}",
+            "minecraft": ">=${minecraftDependencyVersion}",
             "cloth_config": ">=${project.cloth_version}",
             "modmenu": ">=${project.modmenu_version}",
         ])

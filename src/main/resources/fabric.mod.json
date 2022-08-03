@@ -35,6 +35,7 @@
   "mixins": [
     "packed-inventory.mixins.json"
   ],
+  "accessWidener": "packed-inventory.accesswidener",
   "custom": {
     "modmanager": {
       "modrinth": "ofS5nIjw",

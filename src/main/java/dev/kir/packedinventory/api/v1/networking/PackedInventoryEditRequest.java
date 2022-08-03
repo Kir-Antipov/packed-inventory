@@ -237,15 +237,15 @@ public final class PackedInventoryEditRequest {
         getView(inventory, slot, player).ifPresent(view -> view.ifLeft(x -> handleDropView(x, player)).ifRight(x -> handleFailure(x, inventory, slot, player)));
     }
 
-    private static void handleView(Inventory view, Inventory inventory, int slot, ServerPlayerEntity player) {
+    static void handleView(Inventory view, Inventory inventory, int slot, ServerPlayerEntity player) {
         InventoryViewHandlerRegistry.getInstance().handle(view, inventory, slot, player);
     }
 
-    private static void handleFailure(FailureReason failure, Inventory inventory, int slot, ServerPlayerEntity player) {
+    static void handleFailure(FailureReason failure, Inventory inventory, int slot, ServerPlayerEntity player) {
         InventoryValidationFailureHandlerRegistry.getInstance().handle(failure, inventory, slot, player);
     }
 
-    private static void handleQuickView(Inventory from, int fromSlot, Inventory to, int toSlot) {
+    static void handleQuickView(Inventory from, int fromSlot, Inventory to, int toSlot) {
         int origFromSlot = fromSlot;
         int origToSlot = toSlot;
 
@@ -285,7 +285,7 @@ public final class PackedInventoryEditRequest {
         }
     }
 
-    private static void handleDropView(Inventory view, ServerPlayerEntity player) {
+    static void handleDropView(Inventory view, ServerPlayerEntity player) {
         int size = view.size();
         for (int i = 0; i < size; ++i) {
             ItemStack stack = view.removeStack(i);
@@ -295,7 +295,7 @@ public final class PackedInventoryEditRequest {
         }
     }
 
-    private static Optional<Either<Inventory, FailureReason>> getView(Inventory inventory, int slot, ServerPlayerEntity player) {
+    static Optional<Either<Inventory, FailureReason>> getView(Inventory inventory, int slot, ServerPlayerEntity player) {
         InventoryViewerRegistry registry = InventoryViewerRegistry.getInstance();
         Optional<Either<Inventory, FailureReason>> view = registry.view(inventory, slot, player);
         if (view.isEmpty()) {
@@ -345,6 +345,17 @@ public final class PackedInventoryEditRequest {
         /**
          * Contents of the selected inventory view will be dropped into the world.
          */
-        DROP
+        DROP;
+
+        /**
+         * @return An equivalent of this action type instance applicable to {@link PackedInventoryBulkEditRequest}, if any; otherwise, {@link Optional#empty()}.
+         */
+        public Optional<PackedInventoryBulkEditRequest.ActionType> asBulkEditActionType() {
+            return Optional.of(switch (this) {
+                case DEFAULT -> PackedInventoryBulkEditRequest.ActionType.DEFAULT;
+                case QUICK_TRANSFER -> PackedInventoryBulkEditRequest.ActionType.QUICK_TRANSFER;
+                case DROP -> PackedInventoryBulkEditRequest.ActionType.DROP;
+            });
+        }
     }
 }

@@ -1,6 +1,8 @@
 package dev.kir.packedinventory.inventory;
 
 import dev.kir.packedinventory.api.v1.screen.InventoryDependentScreenHandlerFactory;
+import dev.kir.packedinventory.item.NbtListItemStack;
+import dev.kir.packedinventory.nbt.NbtListProvider;
 import dev.kir.packedinventory.util.block.entity.BlockEntityUtil;
 import dev.kir.packedinventory.util.inventory.InventoryUtil;
 import dev.kir.packedinventory.util.inventory.NbtItemListUtil;
@@ -8,7 +10,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -23,11 +24,10 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-public abstract class NbtItemsInventory implements Inventory, NamedScreenHandlerFactory {
+public abstract class NbtItemsInventory implements Inventory, NbtListProvider, NamedScreenHandlerFactory {
     protected final PlayerEntity player;
     protected final Inventory inventory;
     private final DefaultedList<ItemStack> items;
-    private final DefaultedList<ItemStack> trackedItems;
     private ItemStack stack;
     private ItemStack stackCopy;
 
@@ -42,13 +42,11 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
         this.stack = stack;
         this.stackCopy = stack.copy();
 
-        this.getItemList().ifPresent(NbtItemListUtil::clean);
-        this.getItemList().ifPresent(NbtItemListUtil::sort);
+        this.getNbtList().ifPresent(NbtItemListUtil::clean);
+        this.getNbtList().ifPresent(NbtItemListUtil::sort);
         this.removeItemListIfEmpty();
 
         this.items = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        this.trackedItems = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        this.syncItemListWithItems();
     }
 
     public static Builder builder(Inventory inventory, int index, PlayerEntity player) {
@@ -69,12 +67,14 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
 
     protected abstract NbtCompound createNbtWithIdentifyingData();
 
-    protected Optional<NbtList> getItemList() {
-        NbtCompound nbt = this.stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+    @Override
+    public Optional<NbtList> getNbtList() {
+        NbtCompound nbt = this.stack.getSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
         return nbt == null || !nbt.contains(InventoryUtil.ITEMS_KEY, NbtElement.LIST_TYPE) ? Optional.empty() : Optional.of(nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE));
     }
 
-    protected NbtList getRequiredItemList() {
+    @Override
+    public NbtList getOrCreateNbtList() {
         NbtCompound nbt = this.stack.getSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
         if (nbt == null) {
             nbt = this.createNbtWithIdentifyingData();
@@ -89,53 +89,15 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
     }
 
     protected void removeItemListIfEmpty() {
-        NbtCompound nbt = this.stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+        NbtCompound nbt = this.stack.getSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
         if (nbt != null && (!nbt.contains(InventoryUtil.ITEMS_KEY, NbtElement.LIST_TYPE) || nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE).size() == 0)) {
             this.stack.removeSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
         }
     }
 
-    protected void refreshItemList() {
+    private void refreshNbtList() {
         this.removeItemListIfEmpty();
         this.inventory.markDirty();
-    }
-
-    private void syncItemListWithItems() {
-        this.items.clear();
-        this.trackedItems.clear();
-        NbtList list = this.getItemList().orElse(null);
-        if (list == null) {
-            return;
-        }
-
-        int size = this.size();
-        for (NbtElement nbt : list) {
-            if (!(nbt instanceof NbtCompound)) {
-                continue;
-            }
-
-            int slot = ((NbtCompound)nbt).getByte(InventoryUtil.SLOT_KEY);
-            if (slot < 0 || slot >= size) {
-                continue;
-            }
-            ItemStack stack = NbtItemListUtil.asItemStack((NbtCompound)nbt);
-            this.items.set(slot, stack);
-            this.trackedItems.set(slot, stack.copy());
-        }
-    }
-
-    private void syncItemsWithItemList() {
-        NbtList list = this.getRequiredItemList();
-        int size = this.size();
-        for (int i = 0; i < size; ++i) {
-            ItemStack stack = this.items.get(i);
-            ItemStack trackedStack = this.trackedItems.get(i);
-            if (!ItemStack.areEqual(stack, trackedStack)) {
-                this.trackedItems.set(i, stack.copy());
-                NbtItemListUtil.insert(list, i, stack);
-            }
-        }
-        this.refreshItemList();
     }
 
     @Override
@@ -154,54 +116,76 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
 
     @Override
     public boolean isEmpty() {
-        return this.getItemList().map(x -> x.size() == 0).orElse(true);
+        return this.getNbtList().map(x -> x.size() == 0).orElse(true);
     }
 
     @Override
     public ItemStack getStack(int slot) {
-        ItemStack stack = this.getItemList().map(items -> NbtItemListUtil.get(items, slot)).orElse(ItemStack.EMPTY);
-        if (!ItemStack.areEqual(this.items.get(slot), stack)) {
+        ItemStack stack = this.items.get(slot);
+        if (!(stack instanceof NbtListItemStack) || stack.isEmpty()) {
+            boolean isEmptyNbtListItemStack = false;
+            if (stack instanceof NbtListItemStack) {
+                isEmptyNbtListItemStack = true;
+                ((NbtListItemStack)stack).unbound();
+            }
+            stack = NbtListItemStack.of(this, slot);
             this.items.set(slot, stack);
-            this.trackedItems.set(slot, stack.copy());
+            if (isEmptyNbtListItemStack && stack.isEmpty()) {
+                this.getNbtList().ifPresent(list -> NbtItemListUtil.remove(list, slot));
+                this.refreshNbtList();
+            }
         }
         return stack;
     }
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        ItemStack removed = this.getItemList().map(items -> NbtItemListUtil.remove(items, slot, amount)).orElse(ItemStack.EMPTY);
-        if (!removed.isEmpty()) {
-            ItemStack remainingStack = NbtItemListUtil.get(this.getRequiredItemList(), slot);
-            this.items.set(slot, remainingStack);
-            this.trackedItems.set(slot, remainingStack.copy());
-            this.refreshItemList();
+        ItemStack stack = this.getStack(slot);
+        if (stack.isEmpty()) {
+            return this.removeStack(slot);
         }
+
+        ItemStack removed = stack.split(amount);
+        if (stack.isEmpty() && stack instanceof NbtListItemStack) {
+            this.items.set(slot, ItemStack.EMPTY);
+            ((NbtListItemStack)stack).unbound();
+        }
+        this.refreshNbtList();
         return removed;
     }
 
     @Override
     public ItemStack removeStack(int slot) {
-        ItemStack removed = this.getItemList().map(items -> NbtItemListUtil.remove(items, slot)).orElse(ItemStack.EMPTY);
+        ItemStack stack = this.getStack(slot);
+        if (stack == ItemStack.EMPTY) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack removed = stack;
         this.items.set(slot, ItemStack.EMPTY);
-        this.trackedItems.set(slot, ItemStack.EMPTY);
-        if (!removed.isEmpty()) {
-            this.refreshItemList();
+        if (stack instanceof NbtListItemStack) {
+            removed = stack.copy();
+            ((NbtListItemStack)stack).unbound();
+            this.getNbtList().ifPresent(list -> NbtItemListUtil.remove(list, slot));
+            this.refreshNbtList();
         }
         return removed;
     }
 
     @Override
     public void setStack(int slot, ItemStack stack) {
-        this.items.set(slot, stack);
-        this.trackedItems.set(slot, stack.copy());
-        NbtItemListUtil.insert(this.getRequiredItemList(), slot, stack);
-        this.refreshItemList();
+        if (stack == this.items.get(slot)) {
+            return;
+        }
+
+        this.removeStack(slot);
+        if (!stack.isEmpty()) {
+            NbtItemListUtil.insert(this.getOrCreateNbtList(), slot, stack);
+        }
     }
 
     @Override
-    public void markDirty() {
-        this.syncItemsWithItemList();
-    }
+    public void markDirty() { }
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
@@ -247,9 +231,11 @@ public abstract class NbtItemsInventory implements Inventory, NamedScreenHandler
 
     @Override
     public void clear() {
-        this.items.clear();
-        this.trackedItems.clear();
-        this.getItemList().ifPresent(NbtList::clear);
+        int size = this.size();
+        for (int i = 0; i < size; ++i) {
+            this.removeStack(i);
+        }
+        this.getNbtList().ifPresent(NbtList::clear);
         this.removeItemListIfEmpty();
     }
 

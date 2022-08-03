@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_16",
   "client": [
     "ItemStackMixin",
+    "MouseMixin",
+    "KeyboardMixin",
     "HandledScreenMixin"
   ],
   "injectors": {

@@ -8,6 +8,7 @@ import net.minecraft.nbt.NbtList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 public final class NbtItemListUtil {
     private static final Comparator<NbtElement> COMPARATOR = Comparator.comparingInt(x -> x instanceof NbtCompound ? ((NbtCompound)x).getByte(InventoryUtil.SLOT_KEY) : 0);
@@ -86,6 +87,17 @@ public final class NbtItemListUtil {
         } else {
             list.add(i, stackNbt);
         }
+    }
+
+    public static void update(NbtList list, int slot, Consumer<ItemStack> stackUpdater) {
+        int i = binarySearch(list, slot);
+        if (i < 0) {
+            return;
+        }
+
+        ItemStack stack = asItemStack(list.getCompound(i));
+        stackUpdater.accept(stack);
+        list.set(i, asCompound(stack, slot));
     }
 
     public static NbtCompound asCompound(ItemStack stack, int slot) {
