@@ -6,6 +6,7 @@
   "client": [
     "ItemStackMixin",
     "MouseMixin",
+    "KeyboardMixin",
     "HandledScreenMixin"
   ],
   "injectors": {
