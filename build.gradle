@@ -52,7 +52,7 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand([
             "version": version,
-            "minecraft": ">=${minecraftDependencyVersion.replaceFirst(/^(\d+\.\d+)(\.\d+|)$/, '$1')}",
+            "minecraft": ">=${minecraftDependencyVersion}",
             "cloth_config": ">=${project.cloth_version}",
             "modmenu": ">=${project.modmenu_version}",
         ])
