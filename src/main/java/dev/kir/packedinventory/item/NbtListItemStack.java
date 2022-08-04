@@ -36,7 +36,9 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public int getCount() {
-        super.setCount(this.get(ItemStack::getCount, 0));
+        if (!this.isUnbound()) {
+            super.setCount(this.get(ItemStack::getCount, 0));
+        }
         return super.getCount();
     }
 
@@ -48,12 +50,14 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public int getDamage() {
-        int realDamage = this.get(ItemStack::getDamage, 0);
-        int currentDamage = super.getDamage();
-        if (realDamage != currentDamage) {
-            super.setDamage(realDamage);
+        if (!this.isUnbound()) {
+            int realDamage = this.get(ItemStack::getDamage, 0);
+            int currentDamage = super.getDamage();
+            if (realDamage != currentDamage) {
+                super.setDamage(realDamage);
+            }
         }
-        return realDamage;
+        return super.getDamage();
     }
 
     @Override
@@ -88,13 +92,15 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public @Nullable NbtCompound getSubNbt(String key) {
-        NbtCompound realSubNbt = this.get(x -> x.getSubNbt(key), null);
-        NbtCompound currentSubNbt = super.getSubNbt(key);
-        if (!Objects.equals(realSubNbt, currentSubNbt)) {
-            if (realSubNbt == null) {
-                super.removeSubNbt(key);
-            } else {
-                super.setSubNbt(key, realSubNbt);
+        if (!this.isUnbound()) {
+            NbtCompound realSubNbt = this.get(x -> x.getSubNbt(key), null);
+            NbtCompound currentSubNbt = super.getSubNbt(key);
+            if (!Objects.equals(realSubNbt, currentSubNbt)) {
+                if (realSubNbt == null) {
+                    super.removeSubNbt(key);
+                } else {
+                    super.setSubNbt(key, realSubNbt);
+                }
             }
         }
         return super.getSubNbt(key);
@@ -114,7 +120,10 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public Text getName() {
-        return this.get(ItemStack::getName, this.getItem().getName(this));
+        if (!this.isUnbound()) {
+            return this.get(ItemStack::getName, this.getItem().getName(this));
+        }
+        return super.getName();
     }
 
     @Override
@@ -126,7 +135,10 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public boolean hasCustomName() {
-        return this.get(ItemStack::hasCustomName, false);
+        if (!this.isUnbound()) {
+            return this.get(ItemStack::hasCustomName, false);
+        }
+        return super.hasCustomName();
     }
 
     @Override
@@ -149,12 +161,14 @@ public class NbtListItemStack extends EquatableItemStack {
 
     @Override
     public @Nullable Entity getHolder() {
-        Entity realHolder = this.get(ItemStack::getHolder, null);
-        Entity currentHolder = super.getHolder();
-        if (!Objects.equals(realHolder, currentHolder)) {
-            super.setHolder(realHolder);
+        if (!this.isUnbound()) {
+            Entity realHolder = this.get(ItemStack::getHolder, null);
+            Entity currentHolder = super.getHolder();
+            if (!Objects.equals(realHolder, currentHolder)) {
+                super.setHolder(realHolder);
+            }
         }
-        return realHolder;
+        return super.getHolder();
     }
 
     @Override
@@ -189,6 +203,10 @@ public class NbtListItemStack extends EquatableItemStack {
     }
 
     private void refreshNbt() {
+        if (this.isUnbound()) {
+            return;
+        }
+
         NbtCompound realNbt = this.get(ItemStack::getNbt, null);
         NbtCompound currentNbt = super.getNbt();
         if (!Objects.equals(realNbt, currentNbt)) {
