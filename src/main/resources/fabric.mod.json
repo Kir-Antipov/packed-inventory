@@ -37,7 +37,7 @@
   ],
   "accessWidener": "packed-inventory.accesswidener",
   "custom": {
-    "modmanager": {
+    "mc-publish": {
       "modrinth": "ofS5nIjw",
       "curseforge": 641196
     }
