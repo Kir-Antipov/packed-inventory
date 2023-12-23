@@ -1,29 +1,49 @@
 ![Logo](media/logo.png)
 
 # Packed Inventory
-[![GitHub tag](https://img.shields.io/github/v/tag/Kir-Antipov/packed-inventory.svg?cacheSeconds=3600&sort=date)](https://github.com/Kir-Antipov/packed-inventory/releases/latest)
-[![GitHub build status](https://img.shields.io/github/workflow/status/Kir-Antipov/packed-inventory/build-artifacts/1.19.x/dev?cacheSeconds=3600)](https://github.com/Kir-Antipov/packed-inventory/actions/workflows/build-artifacts.yml)
-[![Modrinth](https://img.shields.io/badge/dynamic/json?color=5da545&label=Modrinth&query=title&url=https://api.modrinth.com/v2/project/packed-inventory&style=flat&cacheSeconds=3600&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSIgd2lkdGg9IjE0LjY2NyIgaGVpZ2h0PSIxNC42NjciICB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMXYxMUgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNBKSI+PHBhdGggZD0iTTEuMzA5IDcuODU3YTQuNjQgNC42NCAwIDAgMS0uNDYxLTEuMDYzSDBDLjU5MSA5LjIwNiAyLjc5NiAxMSA1LjQyMiAxMWMxLjk4MSAwIDMuNzIyLTEuMDIgNC43MTEtMi41NTZoMGwtLjc1LS4zNDVjLS44NTQgMS4yNjEtMi4zMSAyLjA5Mi0zLjk2MSAyLjA5MmE0Ljc4IDQuNzggMCAwIDEtMy4wMDUtMS4wNTVsMS44MDktMS40NzQuOTg0Ljg0NyAxLjkwNS0xLjAwM0w4LjE3NCA1LjgybC0uMzg0LS43ODYtMS4xMTYuNjM1LS41MTYuNjk0LS42MjYuMjM2LS44NzMtLjM4N2gwbC0uMjEzLS45MS4zNTUtLjU2Ljc4Ny0uMzcuODQ1LS45NTktLjcwMi0uNTEtMS44NzQuNzEzLTEuMzYyIDEuNjUxLjY0NSAxLjA5OC0xLjgzMSAxLjQ5MnptOS42MTQtMS40NEE1LjQ0IDUuNDQgMCAwIDAgMTEgNS41QzExIDIuNDY0IDguNTAxIDAgNS40MjIgMCAyLjc5NiAwIC41OTEgMS43OTQgMCA0LjIwNmguODQ4QzEuNDE5IDIuMjQ1IDMuMjUyLjgwOSA1LjQyMi44MDljMi42MjYgMCA0Ljc1OCAyLjEwMiA0Ljc1OCA0LjY5MSAwIC4xOS0uMDEyLjM3Ni0uMDM0LjU2bC43NzcuMzU3aDB6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM1ZGE0MjYiLz48L2c+PC9zdmc+)](https://modrinth.com/mod/packed-inventory)
-[![CurseForge](https://img.shields.io/badge/dynamic/json?color=%23f16436&label=CurseForge&query=title&url=https%3A%2F%2Fapi.cfwidget.com%2F641196)](https://www.curseforge.com/minecraft/mc-mods/packed-inventory)
-[![GitHub license](https://img.shields.io/github/license/Kir-Antipov/packed-inventory.svg?cacheSeconds=36000)](https://github.com/Kir-Antipov/packed-inventory#readme)
 
-A Minecraft mod that attempts to mitigate the ever-growing Inventory Problem by making it possible to manage the contents of shulker boxes, ender chests, etc. right inside your inventory.
+[![GitHub Build Status](https://img.shields.io/github/actions/workflow/status/Kir-Antipov/packed-inventory/build-artifacts.yml?style=flat&logo=github&cacheSeconds=3600)](https://github.com/Kir-Antipov/packed-inventory/actions/workflows/build-artifacts.yml)
+[![Version](https://img.shields.io/github/v/release/Kir-Antipov/packed-inventory?sort=date&style=flat&label=version&cacheSeconds=3600)](https://github.com/Kir-Antipov/packed-inventory/releases/latest)
+[![Modrinth](https://img.shields.io/badge/dynamic/json?color=00AF5C&label=Modrinth&query=title&url=https://api.modrinth.com/v2/project/packed-inventory&style=flat&cacheSeconds=3600&logo=modrinth)](https://modrinth.com/mod/packed-inventory)
+[![CurseForge](https://img.shields.io/badge/dynamic/json?color=F16436&label=CurseForge&query=title&url=https://api.cfwidget.com/641196&cacheSeconds=3600&logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/packed-inventory)
+[![License](https://img.shields.io/github/license/Kir-Antipov/packed-inventory?style=flat&cacheSeconds=36000)](https://github.com/Kir-Antipov/packed-inventory/blob/HEAD/LICENSE.md)
 
-Oh, also we have fancy tooltips for shulker boxes, ender chests, maps, and more!
+A Minecraft mod that attempts to mitigate the ever-growing Inventory Problem by making it possible to manage the contents of shulker boxes, ender chests, and more directly from your inventory.
+
+Oh, we also have fancy tooltips for shulker boxes, ender chests, maps, and beyond!
 
 ----
 
 ## Features
 
- - Manage inventory of shulker boxes without ever placing them
- - Manage inventory of your ender chest without ever placing it
- - Bundle-like functionality for inventory items that allows you to quickly suck items into/out of shulker boxes, ender chests, and so on
- - Access crafting tables, stonecutters, and other workstations right from your inventory
- - Vanilla-like tooltips for shulker boxes
- - Vanilla-like tooltips for ender chests
- - Vanilla-like tooltips for filled maps
- - Vanilla-like tooltips for NBT-containing items acquired in Creative via `Ctrl + MMB` *(e.g., chests, barrels, furnaces, hoppers, dispensers, droppers, etc.)*
- - An extensive and simple API that helps other modders implement these features for their blocks and items
+ - Manage the inventory of shulker boxes without ever placing them.
+ - Manage the inventory of your ender chest without ever placing it.
+ - Quickly move items into or out of shulker boxes, ender chests, and other inventory-providing items.
+ - Access crafting tables, stonecutters, and other workstations directly from your inventory.
+ - Vanilla-like tooltips for shulker boxes.
+ - Vanilla-like tooltips for ender chests.
+ - Vanilla-like tooltips for filled maps.
+ - Vanilla-like tooltips for NBT-containing items acquired in Creative mode via `Ctrl + MMB`, such as chests, barrels, furnaces, hoppers, dispensers, droppers, and more.
+ - An extensive and simple API that helps other modders implement these features for their blocks and items.
+
+### Bundle-Like Functionality
+
+![Bundle-like functionality for inventory items](media/quick_transfer-shulker_box.gif)
+
+As mentioned earlier, inventory-providing items *(e.g., shulker boxes, ender chests, and any items registered via the Packed Inventory API)* automatically gain bundle-like functionality, allowing you to quickly move items into or out of them.
+
+To store items inside an inventory-providing item, you can either:
+ - Pick up the inventory-providing item and press `k` on the item(s) to be stored, or
+ - Pick up the inventory-providing item and press `k` on the inventory-providing item(s) to be stored, or
+ - Pick up the item(s) to be stored and press `k` on the inventory-providing item.
+
+To retrieve items from an inventory-providing item:
+ - Pick up the inventory-providing item and press `k` on the empty slot(s) to extract the item(s) to. Note that items are accessed in a LIFO *(Last In, First Out)* manner.
+
+To dump all items from an inventory-providing item out into the world:
+ - Pick up the inventory-providing item, move it outside of the inventory frame, and press `k`.
+
+### Tooltips
 
 Here are some tooltip examples for you:
 
@@ -34,19 +54,7 @@ Here are some tooltip examples for you:
 
 ![Preview](media/preview.png)
 
-As it was said before, inventory items *(e.g., shulker boxes, ender chests, and basically anything registered with the Packed Inventory API)* automatically obtain bundle-like functionality that allows you to quickly suck items into or out of them. To place items inside an inventory item, either
- - pick up it in the inventory and press `Interact with an item` hotkey on the item(s) to be placed inside, or
- - pick up the item(s) and press `Interact with an item` hotkey on the inventory item
-
-When placing inventory items inside another inventory item, the interface uses the first method: picking up Item A and pressing `Interact with an item` hotkey on Item B attempts to store Item B inside A.
-
-Inventory items can be used inside the inventory to take out the last item put in. In this way, items are accessible LIFO *(last in, first out)*.
-
-When used outside the inventory, it dumps all the items out into the world.
-
-![Bundle-like functionality for inventory items](media/quick_transfer-shulker_box.gif)
-
-More screenshots can be seen [here](media/).
+<sup>More screenshots can be found [here](media/).</sup>
 
 ----
 
@@ -54,18 +62,19 @@ More screenshots can be seen [here](media/).
 
 Key binds can be configured just like vanilla ones:
 
- - Go to `Options...`
- - Select `Controls...`
- - Then choose `Key Binds...`
- - Scroll down to the `Packed Inventory` section
+ 1) Go to `Options`.
+ 2) Select `Controls`.
+ 3) Then choose `Key Binds`.
+ 4) Scroll down to the `Packed Inventory` section.
+ 5) Configure the available key binds.
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `Interact with an item` | Interacts with the selected item *(the one located in the active hotbar slot, if the inventory screen is not open; otherwise, the one the mouse is hovering over)*, i.e., either opens an edit screen for it, or tries to suck item(s) into or out of it, or drops its contents into the world | `k` |
+| `Interact with an item` | Interacts with the item in the active hotbar slot. Alternatively, if the inventory screen is open, interacts with the item the mouse is hovering over. Depending on the context, this action can either: <ul><li>Open a screen associated with the selected item,</li><li>Store an item inside the selected inventory-providing item,</li><li>Retrieve an item from the selected inventory-providing item, or</li><li>Dump all the items stored in the selected inventory-providing item out into the world</li></ul> | `k` |
 | `Invert tooltip visibility (hold)` | Inverts tooltip visibility while pressed | `Left Shift` |
 | `Invert tooltip compact mode (hold)` | Inverts tooltip compact mode while pressed | `c` |
 
-It is ok for these key binds to interfere with others, because they are applied when your inventory screen is opened, where other key binds do not work.
+Note that it's totally fine for these key binds to interfere with others since they are applied only when your inventory screen is open, where other key binds usually do not work.
 
 ----
 
@@ -130,23 +139,20 @@ If you have [Cloth Config](https://www.curseforge.com/minecraft/mc-mods/cloth-co
 
 | Name | Description | Side | Default value |
 | ---- | ----------- | ---- |------------- |
-| `defaultTooltipConfig` | Default tooltip config | `client` | `N/A` |
-| `tooltips` | All registered tooltip configs | `client` | `N/A` |
-| `tooltip.enable` | Indicates whether a tooltip should be enabled by default or not | `client` | `true` |
-| `tooltip.compact` | Indicates whether tooltip compact mode should be enabled by default or not | `client` | `false` |
-| `tooltip.showWhenEmpty` | Indicates whether a tooltip should be shown when its content is empty or not | `client` | `false` |
-| `tooltip.rows` | Specifies the number of rows used to display tooltip content | `client` | `-1` |
-| `tooltip.columns` | Specifies the number of columns used to display tooltip content | `client` | `-1` |
-| `tooltip.usePredefinedColor` | Indicates whether a tooltip should use item color or not | `client` | `false` |
-| `tooltip.color` | Specifies default tooltip color in case `usePredefinedColor` is set to `false`, or item color cannot be automatically determined | `client` | `false` |
-| `tooltip.syncInterval` | Determines how often synchronization should occur | `client` | `5000` |
-| `tooltip.size` | Specifies size of a tooltip *(mostly used by the `filled_map` tooltip)* | `client` | `128` |
-| `defaultValidationConfig` | Default validation config | `server` | `N/A` |
-| `validation` | All registered validation configs | `server` | `N/A` |
-| `validation.enable` | Indicates whether an action associated with this validation rule should be allowed at all or not | `server` | `true` |
-| `validation.suppressValidationInCreative` | Indicates whether validation should be suppressed for creative players | `server` | `true` |
-| `validation.requiresPlayerOnGround` | Indicates whether a player should be on the ground in order to proceed | `server` | `true` |
-| `validation.requiresSilkTouch` | Indicates whether a player should have a tool enchanted with silk touch enchantment in order to proceed | `server` | `true` |
+| `tooltip.enable` | Indicates whether this tooltip should be enabled by default | `client` | `true` |
+| `tooltip.compact` | Indicates whether the compact mode should be enabled for this tooltip by default | `client` | `false` |
+| `tooltip.showWhenEmpty` | Indicates whether this tooltip should be shown when its content is empty | `client` | `false` |
+| `tooltip.rows` | Specifies the number of rows used to display the tooltip content | `client` | `-1` |
+| `tooltip.columns` | Specifies the number of columns used to display the tooltip content | `client` | `-1` |
+| `tooltip.usePredefinedColor` | Indicates whether this tooltip should use the item color | `client` | `false` |
+| `tooltip.color` | Specifies the default tooltip color in case `usePredefinedColor` is set to `false` or the item color cannot be automatically determined | `client` | `NONE` |
+| `tooltip.syncInterval` | Specifies the frequency at which synchronization should occur | `client` | `5000` |
+| `tooltip.size` | Specifies the size of this tooltip, if applicable | `client` | `128` |
+|​|​|​|​|
+| `validation.enable` | Indicates whether the action associated with this validation rule should be allowed | `server` | `true` |
+| `validation.suppressValidationInCreative` | Indicates whether this validation rule should be suppressed for creative players | `server` | `true` |
+| `validation.requiresPlayerOnGround` | Indicates whether a player should be on the ground in order to satisfy this validation rule | `server` | `true` |
+| `validation.requiresSilkTouch` | Indicates whether a player should have a tool enchanted with the Silk Touch enchantment in order to satisfy this validation rule | `server` | `true` |
 
 You can edit any of these values directly in the config file or via [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu).
 
@@ -154,41 +160,45 @@ You can edit any of these values directly in the config file or via [ModMenu](ht
 
 ## Development
 
-### Adding the API to your buildscript
+### Dependency Installation
 
-In order to use the API, you will need to add `Packed Inventory` as a dependency to your build script:
+To use the API, add `Packed Inventory` as a dependency in your build script:
 
 `build.gradle`:
 
 ```gradle
 repositories {
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
+  maven {
+    name = "Modrinth"
+    url = "https://api.modrinth.com/maven"
+    content {
+      includeGroup "maven.modrinth"
     }
+  }
 }
 
 dependencies {
-    modImplementation "maven.modrinth:packed-inventory:${project.packed_inventory_version}"
+  modImplementation "maven.modrinth:packed-inventory:${project.packed_inventory_version}"
 }
 ```
 
 `gradle.properties`:
 
 ```properties
-packed_inventory_version=/* version (e.g., 0.2.0+1.18.2) */
+packed_inventory_version=/* version (e.g., 0.3.0+1.20.4) */
 ```
-
-You can find the current version of the API at the [Latest Release](https://github.com/Kir-Antipov/packed-inventory/releases/latest) page.
 
 ### Entrypoints
 
-The API provides 2 new entrypoints that you can declare in your mod's metadata:
+The API introduces two new entrypoints that you can specify in your mod metadata:
+
+|           Name            |                  Description                   |             Interface              |   Side   |
+| ------------------------- | ---------------------------------------------- | ---------------------------------- | -------- |
+| `packed-inventory`        | Will be run first and in any environment       | `PackedInventoryInitializer`       |   `*`    |
+| `packed-inventory-client` | Will be run second and only on the client side | `PackedInventoryClientInitializer` | `client` |
 
 `fabric.mod.json`:
+
 ```json
 {
   "entrypoints": {
@@ -202,14 +212,11 @@ The API provides 2 new entrypoints that you can declare in your mod's metadata:
 }
 ```
 
- - `packed-inventory` - will be run in any environment. Your initializer should implement `PackedInventoryInitializer`
- - `packed-inventory-client` - will be run second and only on the client side. Your initializer should implement `PackedInventoryClientInitializer`
-
 ### Inventory Views
 
-Meet inventory views! An inventory view is an editable inventory representation of an item *(e.g., ender chest inventory for ender chest item, shulker box contents for shulker box item, etc.)*. This is the core concept that allows us to edit item inventories without ever interacting with their block forms.
+Meet inventory views! This is the core concept of this mod that enables us to edit inventories provided by their respective items without ever interacting with their block forms.
 
-Let's register a simple inventory viewer *(the thing that provides inventory views)* for the ender chest item:
+Let's register a simple inventory viewer *(the component that provides inventory views)* for the ender chest item:
 
 ```java
 public class MyMod implements PackedInventoryInitializer {
@@ -217,28 +224,28 @@ public class MyMod implements PackedInventoryInitializer {
     public void registerInventoryViewers(InventoryViewerRegistry registry, PackedInventoryApiConfig config) {
         registry.register(
             // We need to "extract" an inventory from the given context.
-            // In this case it's pretty easy, because ender chests have a shared inventory,
-            // which can be retrieved from the player themself.
+            // In this case, it's straightforward because ender chests have
+            // a shared inventory that can be retrieved from the player.
             (inventory, slot, player) -> player.getEnderChestInventory(),
 
-            // This could be a predicate -
+            // While this absolutely could be a predicate -
             // `(inventory, slot, player) -> inventory.getStack(slot).isOf(Items.ENDER_CHEST)`,
-            // but this form is preferred
+            // this form is preferred.
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-And that's it! You should be able to open the game, hover over an ender chest item stack in your inventory, press `k`, and it will cause the inventory edit screen to pop up.
+And that's it! You should be able to open the game, hover over an ender chest in your inventory, press `k`, and it will cause the inventory edit screen to pop up.
 
-As for the next step, let's make our inventory viewer non-cheaty, so in order to edit the ender chest inventory a player should:
+As for the next step, let's establish some rules to ensure our inventory viewer operates in a fair and non-cheaty way. To edit the ender chest inventory, a player should:
 
- - Be on the ground
- - Have a pickaxe enchanted with silk touch enchantment
- - Or be in the Creative mode
+- Be on the ground, and
+- Have a pickaxe enchanted with the Silk Touch enchantment, or
+- Be in Creative mode.
 
- To achieve this, we will use the `InventoryValidators` class, that contains some useful predefined inventory validators, but keep in mind, that you can always create a new one from scratch.
+To achieve this, we will use the `InventoryValidators` class, which contains some useful predefined inventory validators. Keep in mind that you can always create a new one from scratch.
 
 ```java
 public class MyMod implements PackedInventoryInitializer {
@@ -246,66 +253,71 @@ public class MyMod implements PackedInventoryInitializer {
     public void registerInventoryViewers(InventoryViewerRegistry registry, PackedInventoryApiConfig config) {
         registry.register(
             (inventory, slot, player) -> player.getEnderChestInventory(),
+
             // isInCreative || isOnGround && hasSilkTouch
             InventoryValidators.IS_IN_CREATIVE.or(
                 InventoryValidators.IS_ON_GROUND.and(InventoryValidators.HAS_PICKAXE_WITH_SILK_TOUCH)
             ),
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-We're getting there! Now you will see a friendly error message when you try to open an ender chest in the midair and/or without a pickaxe enchanted with silk touch enchantment, but the moment you switch to the Creative mode, all restrictions will disappear.
+We're getting there! Now, you will see a friendly error message when attempting to open an ender chest in midair and/or without a pickaxe enchanted with the Silk Touch enchantment. However, the moment you switch to Creative mode, all restrictions will disappear.
 
-One last thing to do is to make our inventory viewer configurable. After all, we don't have the `config` parameter for nothing ;)
+One last thing to do is to make our inventory viewer configurable. After all, we have the `config` parameter for a reason ;)
 
 ```java
 public class MyMod implements PackedInventoryInitializer {
     @Override
     public void registerInventoryViewers(InventoryViewerRegistry registry, PackedInventoryApiConfig config) {
-        // Let's register a validation config entry for the ender chest item.
-        // The API has these predefined configs (but you can always create a new one by yourself):
-        // - ValidationConfig — can be enabled/disabled
-        // - GenericValidationConfig — extends ValidationConfig, defines rules for being on the ground and suppressing validation for creative players
-        // - SilkTouchableGenericValidationConfig — extends GenericValidationConfig, defines rule for having a silk touch tool in the inventory
+        // Let's register a validation config entry for the Ender Chest item.
+        // The API provides these predefined configs (although you can create new ones):
+        // - ValidationConfig: can be enabled/disabled.
+        // - GenericValidationConfig: extends ValidationConfig, defines rules for being on the ground and suppressing validation for creative players.
+        // - SilkTouchableGenericValidationConfig: extends GenericValidationConfig, defines a rule for having a Silk Touch tool in the inventory.
         config.registerValidationConfig(Items.ENDER_CHEST, SilkTouchableGenericValidationConfig::new);
 
-        // Inventory viewer may be completely disabled by the user in the config
+        // Inventory viewer may be completely disabled by the user in the config.
         var isEnabled = InventoryValidators.config(Items.ENDER_CHEST, config, ValidationConfig.DEFAULT, ValidationConfig::isEnabled);
 
-        // Suppress validation for creative players only if the config says so
+        // Suppress validation for creative players only if the config says so.
         var isInCreative = InventoryValidators.config(Items.ENDER_CHEST, config, GenericValidationConfig.DEFAULT, GenericValidationConfig::isSuppressedInCreative).and(InventoryValidators.IS_IN_CREATIVE);
 
-        // Require the player to be on the ground only if the config says so
+        // Require the player to be on the ground only if the config says so.
         var isOnGround = InventoryValidators.config(Items.ENDER_CHEST, config, GenericValidationConfig.DEFAULT, x -> !x.requiresPlayerOnGround()).or(InventoryValidators.IS_ON_GROUND);
 
-        // Require the player to have a silk touch in their inventory only if the config says so
+        // Require the player to have a Silk Touch tool in their inventory only if the config says so.
         var hasSilkTouch = InventoryValidators.config(Items.ENDER_CHEST, config, SilkTouchableGenericValidationConfig.DEFAULT, x -> !x.requiresSilkTouch()).or(InventoryValidators.HAS_PICKAXE_WITH_SILK_TOUCH);
 
         registry.register(
             (inventory, slot, player) -> player.getEnderChestInventory(),
-            // isEnabled && (isInCreative || isOnGround && hasSilkTouch)
+
             isEnabled.and(isInCreative.or(isOnGround.and(hasSilkTouch))),
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-This way all restrictions can be configured via `ModMenu`, or `Packed Inventory`'s config file. Perfect, absolutely perfect, you've fully integrated an item with `Packed Inventory`, congratulations!
+This way, all restrictions can be configured via `ModMenu` or directly in the config file.
+
+And after that, you've successfully integrated an item with `Packed Inventory`. Congratulations!
 
 #### Inventory View Handlers
 
-Ok, we've learned about inventory views, but where did that inventory edit screen come from? This is `InventoryViewHandler`'s job.
+So, we've learned about inventory views, but where did that inventory edit screen come from? That's where the `InventoryViewHandler` comes in.
 
-Most of the time you should be ok if your inventory:
+Most of the time, you do not need to register a custom handler if your inventory:
 
  - Implements `NamedScreenHandlerFactory`, or
  - Implements `ScreenHandlerFactory`, or
- - Has a conventional size that can be processed by a `GenericContainerScreenHandler` *(i.e., 9, 18, 27, 36, 45, or 54)*
+ - Has a conventional size *(i.e., 9, 18, 27, 36, 45, or 54)* that can be processed by a `GenericContainerScreenHandler`.
 
-But, just as usual, you can register an `InventoryViewHandler` of your own:
+But, just as usual, you can register your own `InventoryViewHandler`:
 
 ```java
 public class MyMod implements PackedInventoryInitializer {
@@ -319,17 +331,18 @@ public class MyMod implements PackedInventoryInitializer {
 
                 player.openHandledScreen(namedFactory);
             },
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-Note, that you are **not** limited to just opening a handled screen, you can literally do whatever you want with the provided inventory view.
+Note that you are **not** limited to just opening a handled screen; you can literally do whatever you want with the provided inventory view.
 
 #### Inventory Validation Failure Handlers
 
-*These names just keep getting longer and longer.* So, we can customize inventory view handling, but what about failure handling? Of course, you can tweak it too.
+So, we can customize inventory view handling, but what about failure handling? Of course, you can tweak that too.
 
 By default, errors are sent to the corresponding player's action bar, but you can change this behavior:
 
@@ -344,6 +357,7 @@ public class MyMod implements PackedInventoryInitializer {
                     player.sendMessage(text, false);
                 }
             },
+
             Items.ENDER_CHEST
         );
     }
@@ -352,11 +366,11 @@ public class MyMod implements PackedInventoryInitializer {
 
 ### Tooltips
 
-What is good inventory management without descriptive tooltips? Let's make one for ender chests via `TooltipProvider`!
+What is good inventory management without descriptive tooltips? Let's create one for ender chests using `TooltipProvider`!
 
 ```java
-// Note, that tooltips are completely client-side,
-// so we use `PackedInventoryClientInitializer` instead of `PackedInventoryInitializer` here
+// Note that tooltips are completely client-side, so we use
+// `PackedInventoryClientInitializer` instead of `PackedInventoryInitializer` here.
 public class MyClientMod implements PackedInventoryClientInitializer {
     @Override
     public void registerTooltipProviders(TooltipProviderRegistry registry, PackedInventoryApiConfig config) {
@@ -364,13 +378,14 @@ public class MyClientMod implements PackedInventoryClientInitializer {
             TooltipProvider.builder()
                 .tooltipText((stack, context) -> List.of(Text.of("This is an ender chest")))
                 .build()
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-This way ender chest's tooltip will be replaced with "This is an ender chest" text. Well, this is not helpful. The problem with ender chests is the client does not have any information about their contents. So, is this a dead end? Of course not. We are gonna use some *magic*:
+This way, the ender chest's tooltip will be replaced with the text "This is an ender chest." However, this is not helpful, is it? The problem with ender chests is that the client does not have any information about their contents. So, is this a dead end? Of course not. We are going to use some *magic*:
 
 ```java
 public class MyClientMod implements PackedInventoryClientInitializer {
@@ -381,15 +396,16 @@ public class MyClientMod implements PackedInventoryClientInitializer {
                 .useSyncData(GenericContainerTooltipSyncData::of)
                 .tooltipData((stack, context, syncData) -> GenericContainerTooltipData.of(syncData.getInventory()))
                 .build()
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-After specifying that our `TooltipProvider` needs `TooltipSyncData` *(in this case I use predefined `GenericContainerTooltipSyncData`, because we only care about ender chest's inventory)*, we are able to use it in the consequential calls to `tooltipData`, `tooltipText`, etc. We will talk about `TooltipSyncData` a little bit later, at the moment just pretend that everything just works.
+After specifying that our `TooltipProvider` needs `TooltipSyncData` *(in this case, I use the predefined `GenericContainerTooltipSyncData` because we only care about the ender chest's inventory)*, we can use it in the subsequent calls to `tooltipData`, `tooltipText`, etc. We'll delve into `TooltipSyncData` a bit later; for now, let's assume that everything just works.
 
-Note, that we override ender chest's `TooltipData` with `GenericContainerTooltipData`. In case you are not familiar with vanilla treatment of these things, if an item has a `TooltipData`, Minecraft will look for a corresponding `TooltipComponent`, which allows you to render everything you want inside of a tooltip. `GenericContainerTooltipData` is provided by the API, so you don't need to worry about supplying the game with a tooltip component for it, but if you want to use custom tooltip data, you need to register a tooltip component manually via Fabric API like so:
+Note that we override the ender chest's `TooltipData` with `GenericContainerTooltipData`. If you're not familiar with the vanilla treatment of this sort of things, when an item provides a `TooltipData`, Minecraft looks for a corresponding `TooltipComponent`. This component allows you to render anything you want inside a tooltip. `GenericContainerTooltipData` is provided by the API, so you don't need to worry about supplying the game with a tooltip component for it. However, if you want to use custom tooltip data, you'll need to register a tooltip component manually through Fabric API, like so:
 
 ```java
 TooltipComponentCallback.EVENT.register(tooltipData -> {
@@ -400,17 +416,17 @@ TooltipComponentCallback.EVENT.register(tooltipData -> {
 });
 ```
 
-Fine, now we have a fancy tooltip that shows us contents of the ender chest. Once again, it's time to make everything configurable:
+Alright, now we have a fancy tooltip that shows us the contents of the ender chest. Once again, it's time to make everything configurable:
 
 ```java
 public class MyClientMod implements PackedInventoryClientInitializer {
     @Override
     public void registerTooltipProviders(TooltipProviderRegistry registry, PackedInventoryApiConfig config) {
-        // Let's register a tooltip config entry for the ender chest item.
-        // The API has these predefined configs (but you can always create a new one by yourself):
-        // - TooltipConfig — can be enabled/disabled, compact mode can be switched on or off
-        // - GenericTooltipConfig — extends TooltipConfig, defines properties commonly used by containers
-        // - GenericSyncedTooltipConfig — extends GenericTooltipConfig, defines `syncInterval` property used by tooltip providers that require synchronization data
+        // Let's register a tooltip config entry for the Ender Chest item.
+        // The API provides these predefined configs (although you can create new ones):
+        // - TooltipConfig: can be enabled/disabled; compact mode can be switched on or off.
+        // - GenericTooltipConfig: extends TooltipConfig, defines properties commonly used by containers.
+        // - GenericSyncedTooltipConfig: extends GenericTooltipConfig, defines the `syncInterval` property used by tooltip providers requiring synchronization data.
         config.registerTooltipConfig(Items.ENDER_CHEST, GenericSyncedTooltipConfig::new);
 
         registry.register(
@@ -432,9 +448,10 @@ public class MyClientMod implements PackedInventoryClientInitializer {
                         return GenericContainerTooltipData.of(inventory, cfg.rows(), cfg.columns(), color);
                     }
                 })
-                // Make synchronization interval for this TooltipProvider configurable
+                // Make the synchronization interval for this TooltipProvider configurable
                 .syncInterval(stack -> config.getTooltipConfigOrDefault(stack.getItem(), GenericSyncedTooltipConfig.DEFAULT).syncInterval())
                 .build(),
+
             Items.ENDER_CHEST
         );
     }
@@ -443,26 +460,27 @@ public class MyClientMod implements PackedInventoryClientInitializer {
 
 #### Tooltip Sync Data Providers
 
-As it was said before, in order to make the example above work, we need some information from the server. That's where `TooltipSyncData` and `TooltipSyncDataProvider`s come in play.
+As mentioned earlier, to make the example above work, we need some information from the server. That's where `TooltipSyncData` and `TooltipSyncDataProviders` come into play.
 
-We are already using `GenericContainerTooltipSyncData` in our ender chest's tooltip provider, so let's get back to the server and teach it how to handle it:
+We already use `GenericContainerTooltipSyncData` in our ender chest's tooltip provider, so let's go back to the server and teach it how to handle it:
 
 ```java
 public class MyMod implements PackedInventoryInitializer {
     @Override
     public void registerTooltipSyncDataProviders(TooltipSyncDataProviderRegistry registry, PackedInventoryApiConfig config) {
         registry.register(
-            // On the server side, we need to create the same TooltipSyncData,
-            // and fill it with contents that are not presented at the client.
+            // On the server side, we need to create the same TooltipSyncData
+            // and populate it with contents that are not present on the client.
             // Everything else will be handled by Packed Inventory automatically.
             (stack, player) -> GenericContainerTooltipSyncData.of(player.getEnderChestInventory()),
+
             Items.ENDER_CHEST
         );
     }
 }
 ```
 
-Just a few lines of code and everything works as expected.
+With just a few lines of code, everything works as expected.
 
 ----
 
