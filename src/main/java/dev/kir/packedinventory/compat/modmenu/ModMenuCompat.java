@@ -3,7 +3,7 @@ package dev.kir.packedinventory.compat.modmenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.kir.packedinventory.compat.cloth.PackedInventoryClothConfig;
-import dev.kir.packedinventory.util.DefaultedDyeColor;
+import dev.kir.packedinventory.util.OptionalDyeColor;
 import dev.kir.packedinventory.util.collection.DefaultedMap;
 import dev.kir.packedinventory.util.collection.KeyValuePair;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -113,14 +113,14 @@ public final class ModMenuCompat implements ModMenuApi {
 
         registry.registerTypeProvider(
             (i18n, field, config, defaults, guiProvider) -> {
-                DefaultedDyeColor[] enums = DefaultedDyeColor.values();
+                OptionalDyeColor[] enums = OptionalDyeColor.values();
                 return Collections.singletonList(
                     entryBuilder.startSelector(
                         Text.translatable(i18n),
                         enums,
-                        DefaultedDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults)))
+                        OptionalDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults)))
                     )
-                    .setDefaultValue(() -> DefaultedDyeColor.of(Utils.getUnsafely(field, defaults)))
+                    .setDefaultValue(() -> OptionalDyeColor.of(Utils.getUnsafely(field, defaults)))
                     .setSaveConsumer(newValue -> Utils.setUnsafely(field, config, newValue.getColor()))
                     .build()
                 );
@@ -130,15 +130,15 @@ public final class ModMenuCompat implements ModMenuApi {
 
         registry.registerPredicateProvider(
             (i18n, field, config, defaults, guiProvider) -> {
-                List<DefaultedDyeColor> enums = Arrays.asList(DefaultedDyeColor.values());
+                List<OptionalDyeColor> enums = Arrays.asList(OptionalDyeColor.values());
                 return Collections.singletonList(
                         entryBuilder.startDropdownMenu(
                             Text.translatable(i18n),
                             DropdownMenuBuilder.TopCellElementBuilder.of(
-                                DefaultedDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults))),
+                                OptionalDyeColor.of(Utils.getUnsafely(field, config, Utils.getUnsafely(field, defaults))),
                                 str -> {
                                     String s = Text.of(str).getString();
-                                    for (DefaultedDyeColor constant : enums) {
+                                    for (OptionalDyeColor constant : enums) {
                                         if (constant.toString().equals(s)) {
                                             return constant;
                                         }
@@ -150,7 +150,7 @@ public final class ModMenuCompat implements ModMenuApi {
                             DropdownMenuBuilder.CellCreatorBuilder.of(v -> Text.of(v.toString()))
                         )
                         .setSelections(enums)
-                        .setDefaultValue(() -> DefaultedDyeColor.of(Utils.getUnsafely(field, defaults)))
+                        .setDefaultValue(() -> OptionalDyeColor.of(Utils.getUnsafely(field, defaults)))
                         .setSaveConsumer(newValue -> Utils.setUnsafely(field, config, newValue.getColor()))
                         .build()
                 );

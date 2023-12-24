@@ -3,7 +3,7 @@ package dev.kir.packedinventory.util;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.Nullable;
 
-public enum DefaultedDyeColor {
+public enum OptionalDyeColor {
     NONE(null),
     WHITE(DyeColor.WHITE),
     ORANGE(DyeColor.ORANGE),
@@ -24,7 +24,7 @@ public enum DefaultedDyeColor {
     
     private final DyeColor color;
 
-    DefaultedDyeColor(@Nullable DyeColor color) {
+    OptionalDyeColor(@Nullable DyeColor color) {
         this.color = color;
     }
 
@@ -36,7 +36,7 @@ public enum DefaultedDyeColor {
         return this.color;
     }
     
-    public static DefaultedDyeColor of(@Nullable DyeColor color) {
+    public static OptionalDyeColor of(@Nullable DyeColor color) {
         if (color == null) {
             return NONE;
         }
