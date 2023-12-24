@@ -10,6 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,50 +30,59 @@ public final class BlockEntityUtil {
     @SuppressWarnings("OptionalAssignedToNull")
     public static Optional<BlockEntityType<?>> getBlockEntityType(Item item) {
         Optional<BlockEntityType<?>> result = BLOCK_ENTITIES_BY_ITEM.get(item);
-        if (result == null) {
-            Identifier id = Registries.ITEM.getId(item);
-            BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
-            if (blockEntityType == null) {
-                String prefix = PREFIXES.stream().filter(id.getPath()::startsWith).findFirst().orElse(null);
-                if (prefix != null) {
-                    Identifier noPrefixId = new Identifier(id.getNamespace(), id.getPath().substring(prefix.length()));
-                    blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(noPrefixId);
-                }
-            }
-            result = Optional.ofNullable(blockEntityType);
-            BLOCK_ENTITIES_BY_ITEM.put(item, result);
+        if (result != null) {
+            return result;
         }
+
+        Identifier id = Registries.ITEM.getId(item);
+        BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
+        if (blockEntityType == null) {
+            String prefix = PREFIXES.stream().filter(id.getPath()::startsWith).findFirst().orElse(null);
+            if (prefix != null) {
+                Identifier noPrefixId = new Identifier(id.getNamespace(), id.getPath().substring(prefix.length()));
+                blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(noPrefixId);
+            }
+        }
+
+        result = Optional.ofNullable(blockEntityType);
+        BLOCK_ENTITIES_BY_ITEM.put(item, result);
         return result;
     }
 
     public static Consumer<NbtCompound> getBlockEntityItemStackInitializer(Item relevantItem) {
         Consumer<NbtCompound> initializer = ITEM_NBT_INITIALIZERS.get(relevantItem);
-        if (initializer == null) {
-            Identifier id = Registries.ITEM.getId(relevantItem);
-            BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
-            if (blockEntityType == null) {
-                String idStr = id.toString();
-                initializer = nbt -> nbt.putString("id", idStr);
-            } else {
-                initializer = BlockEntityUtil.getBlockEntityItemStackInitializer(blockEntityType, relevantItem);
-            }
-            ITEM_NBT_INITIALIZERS.put(relevantItem, initializer);
+        if (initializer != null) {
+            return initializer;
         }
+
+        Identifier id = Registries.ITEM.getId(relevantItem);
+        BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
+        if (blockEntityType != null) {
+            return BlockEntityUtil.getBlockEntityItemStackInitializer(blockEntityType, relevantItem);
+        }
+
+        String idStr = id.toString();
+        initializer = nbt -> nbt.putString("id", idStr);
+
+        ITEM_NBT_INITIALIZERS.put(relevantItem, initializer);
         return initializer;
     }
 
     public static Consumer<NbtCompound> getBlockEntityItemStackInitializer(BlockEntityType<?> blockEntityType, Item relevantItem) {
         Consumer<NbtCompound> initializer = BLOCK_ENTITY_NBT_INITIALIZERS.get(blockEntityType);
-        if (initializer == null) {
-            BlockEntity be = BlockEntityUtil.getInstance(blockEntityType);
-            if (be == null) {
-                String id = Registries.ITEM.getId(relevantItem).toString();
-                initializer = nbt -> nbt.putString("id", id);
-            } else {
-                initializer = x -> x.copyFrom(be.createNbtWithIdentifyingData());
-            }
-            BLOCK_ENTITY_NBT_INITIALIZERS.put(blockEntityType, initializer);
+        if (initializer != null) {
+            return initializer;
         }
+
+        BlockEntity blockEntity = BlockEntityUtil.getInstance(blockEntityType);
+        if (blockEntity == null) {
+            String id = Registries.ITEM.getId(relevantItem).toString();
+            initializer = nbt -> nbt.putString("id", id);
+        } else {
+            initializer = x -> x.copyFrom(blockEntity.createNbtWithIdentifyingData());
+        }
+
+        BLOCK_ENTITY_NBT_INITIALIZERS.put(blockEntityType, initializer);
         return initializer;
     }
 
@@ -85,26 +95,44 @@ public final class BlockEntityUtil {
         return size == null ? defaultValue : size;
     }
 
-    private static Integer getInventorySizeImpl(BlockEntityType<?> blockEntityType) {
-        Integer size = BLOCK_ENTITY_SIZES.get(blockEntityType);
-        if (size == null) {
-            BlockEntity be = BlockEntityUtil.getInstance(blockEntityType);
-            if (be instanceof Inventory) {
-                size = ((Inventory)be).size();
-                BLOCK_ENTITY_SIZES.put(blockEntityType, size);
-            }
+    private static @Nullable Integer getInventorySizeImpl(BlockEntityType<?> blockEntityType) {
+        final int INVALID_BLOCK_ENTITY_SIZE= -1;
+
+        Integer cachedSize = BLOCK_ENTITY_SIZES.get(blockEntityType);
+        if (cachedSize != null) {
+            return cachedSize == INVALID_BLOCK_ENTITY_SIZE ? null : cachedSize;
         }
-        return size;
+
+        BlockEntity blockEntity = BlockEntityUtil.getInstance(blockEntityType);
+        if (!(blockEntity instanceof Inventory)) {
+            BLOCK_ENTITY_SIZES.put(blockEntityType, INVALID_BLOCK_ENTITY_SIZE);
+            return null;
+        }
+
+        try {
+            int size = ((Inventory)blockEntity).size();
+            BLOCK_ENTITY_SIZES.put(blockEntityType, size);
+            return size;
+        } catch (Throwable error) {
+            // Guard against faulty `BlockEntity` implementations.
+            BLOCK_ENTITY_SIZES.put(blockEntityType, INVALID_BLOCK_ENTITY_SIZE);
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends BlockEntity> T getInstance(BlockEntityType<T> blockEntityType) {
+    public static <T extends BlockEntity> @Nullable T getInstance(BlockEntityType<T> blockEntityType) {
         return (T)BLOCK_ENTITIES.computeIfAbsent(blockEntityType, BlockEntityUtil::createInstance);
     }
 
-    private static <T extends BlockEntity> T createInstance(BlockEntityType<T> blockEntityType) {
-        Block block = Registries.BLOCK.get(Registries.BLOCK_ENTITY_TYPE.getId(blockEntityType));
-        return blockEntityType.supports(block.getDefaultState()) ? blockEntityType.instantiate(BlockPos.ORIGIN, block.getDefaultState()) : null;
+    private static <T extends BlockEntity> @Nullable T createInstance(BlockEntityType<T> blockEntityType) {
+        try {
+            Block block = Registries.BLOCK.get(Registries.BLOCK_ENTITY_TYPE.getId(blockEntityType));
+            return blockEntityType.supports(block.getDefaultState()) ? blockEntityType.instantiate(BlockPos.ORIGIN, block.getDefaultState()) : null;
+        } catch (Throwable error) {
+            // Guard against faulty `BlockEntity` implementations.
+            return null;
+        }
     }
 
     private BlockEntityUtil() { }
