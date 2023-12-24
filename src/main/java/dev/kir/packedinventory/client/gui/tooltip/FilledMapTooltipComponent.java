@@ -47,13 +47,13 @@ public final class FilledMapTooltipComponent implements TooltipComponent {
     }
 
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
         if (!this.canRenderMap()) {
             return;
         }
 
         matrices.push();
-        matrices.translate(x, y, z);
+        matrices.translate(x, y, 0);
         float scale = (float)this.size / FilledMapTooltipData.DEFAULT_MAP_SIZE;
         matrices.scale(scale, scale, 0);
         VertexConsumerProvider.Immediate vertexConsumers = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());

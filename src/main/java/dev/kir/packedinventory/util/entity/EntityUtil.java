@@ -1,21 +1,23 @@
 package dev.kir.packedinventory.util.entity;
 
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.entry.RegistryEntryOwner;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
@@ -29,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkManager;
@@ -36,11 +39,10 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.entity.EntityLookup;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.tick.QueryableTickScheduler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalLong;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -145,7 +147,7 @@ public final class EntityUtil {
     }
 
     private static World createWorld(boolean isClient) {
-        return new World(null, World.OVERWORLD, FAKE_DIMENSION, null, isClient, false, 0, 16) {
+        return new World(null, World.OVERWORLD, createDynamicRegistryManager(), FAKE_DIMENSION, null, isClient, false, 0, 16) {
             @Override
             public RegistryEntry<Biome> getGeneratorStoredBiome(int biomeX, int biomeY, int biomeZ) {
                 return null;
@@ -277,6 +279,188 @@ public final class EntityUtil {
             @Override
             protected EntityLookup<Entity> getEntityLookup() {
                 return null;
+            }
+        };
+    }
+
+    private static DynamicRegistryManager createDynamicRegistryManager() {
+        SimpleRegistry<Registry<DamageType>> registries = new SimpleRegistry<>(RegistryKey.ofRegistry(new Identifier("fake", "registries")), Lifecycle.stable());
+
+        registries.add(RegistryKeys.DAMAGE_TYPE, createRegistry(RegistryKeys.DAMAGE_TYPE, Lifecycle.stable()), Lifecycle.stable());
+
+        return DynamicRegistryManager.of(registries);
+    }
+
+    private static <T> Registry<T> createRegistry(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle) {
+        return new Registry<>() {
+            @Override
+            public RegistryKey<? extends Registry<T>> getKey() {
+                return key;
+            }
+
+            @Nullable
+            @Override
+            public Identifier getId(T value) {
+                return null;
+            }
+
+            @Override
+            public Optional<RegistryKey<T>> getKey(T entry) {
+                return Optional.empty();
+            }
+
+            @Override
+            public int getRawId(@Nullable T value) {
+                return 0;
+            }
+
+            @Nullable
+            @Override
+            public T get(@Nullable RegistryKey<T> key) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public T get(@Nullable Identifier id) {
+                return null;
+            }
+
+            @Override
+            public Lifecycle getEntryLifecycle(T entry) {
+                return lifecycle;
+            }
+
+            @Override
+            public Lifecycle getLifecycle() {
+                return lifecycle;
+            }
+
+            @Override
+            public Set<Identifier> getIds() {
+                return Set.of();
+            }
+
+            @Override
+            public Set<Map.Entry<RegistryKey<T>, T>> getEntrySet() {
+                return Set.of();
+            }
+
+            @Override
+            public Set<RegistryKey<T>> getKeys() {
+                return Set.of();
+            }
+
+            @Override
+            public Optional<RegistryEntry.Reference<T>> getRandom(Random random) {
+                return Optional.empty();
+            }
+
+            @Override
+            public boolean containsId(Identifier id) {
+                return false;
+            }
+
+            @Override
+            public boolean contains(RegistryKey<T> key) {
+                return false;
+            }
+
+            @Override
+            public Registry<T> freeze() {
+                return this;
+            }
+
+            @Override
+            public RegistryEntry.Reference<T> createEntry(T value) {
+                return null;
+            }
+
+            @Override
+            public Optional<RegistryEntry.Reference<T>> getEntry(int rawId) {
+                return Optional.empty();
+            }
+
+            @Override
+            public RegistryEntry.Reference<T> entryOf(RegistryKey<T> key) {
+                return null;
+            }
+
+            @Override
+            public Optional<RegistryEntry.Reference<T>> getEntry(RegistryKey<T> key) {
+                return Optional.empty();
+            }
+
+            @Override
+            public RegistryEntry<T> getEntry(T value) {
+                return RegistryEntry.of(value);
+            }
+
+            @Override
+            public Stream<RegistryEntry.Reference<T>> streamEntries() {
+                return Stream.empty();
+            }
+
+            @Override
+            public Optional<RegistryEntryList.Named<T>> getEntryList(TagKey<T> tag) {
+                return Optional.empty();
+            }
+
+            @Override
+            public RegistryEntryList.Named<T> getOrCreateEntryList(TagKey<T> tag) {
+                return null;
+            }
+
+            @Override
+            public Stream<Pair<TagKey<T>, RegistryEntryList.Named<T>>> streamTagsAndEntries() {
+                return Stream.empty();
+            }
+
+            @Override
+            public Stream<TagKey<T>> streamTags() {
+                return Stream.empty();
+            }
+
+            @Override
+            public void clearTags() {
+
+            }
+
+            @Override
+            public void populateTags(Map<TagKey<T>, List<RegistryEntry<T>>> tagEntries) {
+
+            }
+
+            @Override
+            public RegistryEntryOwner<T> getEntryOwner() {
+                return new RegistryEntryOwner<>() { };
+            }
+
+            @Override
+            public RegistryWrapper.Impl<T> getReadOnlyWrapper() {
+                return new RegistryWrapper.Impl.Delegating<>() {
+                    @Override
+                    protected Impl<T> getBase() {
+                        return null;
+                    }
+                };
+            }
+
+            @Nullable
+            @Override
+            public T get(int index) {
+                return null;
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @NotNull
+            @Override
+            public Iterator<T> iterator() {
+                return stream().iterator();
             }
         };
     }

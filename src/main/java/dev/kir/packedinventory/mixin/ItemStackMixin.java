@@ -102,31 +102,36 @@ abstract class ItemStackMixin {
     }
 
     @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 1), locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void beginUpgradesTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
+        this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.UPGRADES);
+    }
+
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 2), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginEnchantmentsTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.ENCHANTMENTS);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 2), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 3), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginDyeTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.DYE);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 3), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 4), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginModifiersTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.MODIFIERS);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 4), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 5), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginUnbreakableTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.UNBREAKABLE);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 5), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 6), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginCanDestroyTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.CAN_DESTROY);
     }
 
-    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 6), locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isSectionVisible(ILnet/minecraft/item/ItemStack$TooltipSection;)Z", shift = At.Shift.BEFORE, ordinal = 7), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void beginCanPlaceTooltipSection(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
         this.beginTooltipSectionAndAddMissingSections(list, TooltipText.Part.CAN_PLACE);
     }

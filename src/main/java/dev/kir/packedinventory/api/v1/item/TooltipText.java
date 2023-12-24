@@ -465,6 +465,10 @@ public final class TooltipText {
         /**
          * Enchantment list.
          */
+        UPGRADES(ItemStack.TooltipSection.UPGRADES),
+        /**
+         * Enchantment list.
+         */
         ENCHANTMENTS(ItemStack.TooltipSection.ENCHANTMENTS),
         /**
          * Dye color.

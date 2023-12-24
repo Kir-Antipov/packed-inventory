@@ -125,8 +125,8 @@ public class ScreenHandlerProxy extends AbstractRecipeScreenHandler<Inventory> {
     }
 
     @Override
-    public void close(PlayerEntity player) {
-        this.handler.close(player);
+    public void onClosed(PlayerEntity player) {
+        this.handler.onClosed(player);
     }
 
     @Override

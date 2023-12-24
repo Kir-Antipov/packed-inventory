@@ -96,20 +96,21 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      * @param y Y screen coordinate.
      * @param matrices The {@link MatrixStack} instance.
      * @param itemRenderer A {@link ItemRenderer} instance that should be used to render items.
-     * @param z Z-index.
      */
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
         int columns = this.getColumns();
         int rows = this.getRows();
+
         for (int rI = 0, i = 0; rI < rows; ++rI) {
             for (int cI = 0; cI < columns; ++cI) {
                 int xS = x + cI * SLOT_WIDTH + BORDER_SIZE;
                 int yS = y + rI * SLOT_HEIGHT + BORDER_SIZE;
-                this.drawSlot(matrices, i++, xS, yS, z, textRenderer, itemRenderer);
+                this.drawSlot(xS, yS, i++, textRenderer, matrices, itemRenderer);
             }
         }
-        this.drawOutline(matrices, x, y, z, columns, rows);
+
+        this.drawOutline(x, y, columns, rows, matrices);
     }
 
     /**
@@ -119,21 +120,20 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      * @param index Index of the item that should be rendered.
      * @param x X screen coordinate.
      * @param y Y screen coordinate.
-     * @param z Z-index.
      * @param textRenderer A {@link TextRenderer} instance that should be used to render text.
      * @param itemRenderer A {@link ItemRenderer} instance that should be used to render items.
      */
-    protected void drawSlot(MatrixStack matrices, int index, int x, int y, int z, TextRenderer textRenderer, ItemRenderer itemRenderer) {
+    protected void drawSlot(int x, int y, int index, TextRenderer textRenderer, MatrixStack matrices, ItemRenderer itemRenderer) {
         Inventory inventory = this.getInventory();
         if (index >= inventory.size()) {
-            this.draw(matrices, x, y, z, Sprite.BLOCKED_SLOT);
+            this.draw(matrices, x, y, Sprite.BLOCKED_SLOT);
             return;
         }
 
         ItemStack itemStack = inventory.getStack(index);
-        this.draw(matrices, x, y, z, Sprite.SLOT);
-        itemRenderer.renderInGuiWithOverrides(itemStack, x + 1, y + 1, index);
-        itemRenderer.renderGuiItemOverlay(textRenderer, itemStack, x + 1, y + 1);
+        this.draw(matrices, x, y, Sprite.SLOT);
+        itemRenderer.renderInGuiWithOverrides(matrices, itemStack, x + 1, y + 1, index);
+        itemRenderer.renderGuiItemOverlay(matrices, textRenderer, itemStack, x + 1, y + 1);
     }
 
     /**
@@ -142,30 +142,29 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      * @param matrices The {@link MatrixStack} instance.
      * @param x X screen coordinate.
      * @param y Y screen coordinate.
-     * @param z Z-index.
      * @param columns Number of columns of this {@link TooltipComponent}'s {@link Inventory}.
      * @param rows Number of rows of this {@link TooltipComponent}'s {@link Inventory}.
      */
-    protected void drawOutline(MatrixStack matrices, int x, int y, int z, int columns, int rows) {
-        this.draw(matrices, x, y, z, Sprite.BORDER_CORNER_TOP);
-        this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y, z, Sprite.BORDER_CORNER_TOP);
+    protected void drawOutline(int x, int y, int columns, int rows, MatrixStack matrices) {
+        this.draw(matrices, x, y, Sprite.BORDER_CORNER_TOP);
+        this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y, Sprite.BORDER_CORNER_TOP);
 
         for (int i = 0; i < columns; ++i) {
-            this.draw(matrices, x + BORDER_SIZE + i * SLOT_WIDTH, y, z, Sprite.BORDER_HORIZONTAL_TOP);
-            this.draw(matrices, x + BORDER_SIZE + i * SLOT_WIDTH, y + rows * SLOT_HEIGHT, z, Sprite.BORDER_HORIZONTAL_BOTTOM);
+            this.draw(matrices, x + BORDER_SIZE + i * SLOT_WIDTH, y, Sprite.BORDER_HORIZONTAL_TOP);
+            this.draw(matrices, x + BORDER_SIZE + i * SLOT_WIDTH, y + rows * SLOT_HEIGHT, Sprite.BORDER_HORIZONTAL_BOTTOM);
         }
 
         for (int i = 0; i < rows; ++i) {
-            this.draw(matrices, x, y + i * SLOT_HEIGHT + BORDER_SIZE, z, Sprite.BORDER_VERTICAL);
-            this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y + i * SLOT_HEIGHT + BORDER_SIZE, z, Sprite.BORDER_VERTICAL);
+            this.draw(matrices, x, y + i * SLOT_HEIGHT + BORDER_SIZE, Sprite.BORDER_VERTICAL);
+            this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y + i * SLOT_HEIGHT + BORDER_SIZE, Sprite.BORDER_VERTICAL);
         }
 
-        this.draw(matrices, x, y + rows * SLOT_HEIGHT, z, Sprite.BORDER_CORNER_BOTTOM);
-        this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y + rows * SLOT_HEIGHT, z, Sprite.BORDER_CORNER_BOTTOM);
+        this.draw(matrices, x, y + rows * SLOT_HEIGHT, Sprite.BORDER_CORNER_BOTTOM);
+        this.draw(matrices, x + columns * SLOT_WIDTH + BORDER_SIZE, y + rows * SLOT_HEIGHT, Sprite.BORDER_CORNER_BOTTOM);
     }
 
-    private void draw(MatrixStack matrices, int x, int y, int z, Sprite sprite) {
-        this.draw(matrices, x, y, z, sprite, this.getColor());
+    private void draw(MatrixStack matrices, int x, int y, Sprite sprite) {
+        this.draw(matrices, x, y, sprite, this.getColor());
     }
 
     /**
@@ -174,14 +173,16 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      * @param matrices The {@link MatrixStack} instance.
      * @param x X screen coordinate.
      * @param y Y screen coordinate.
-     * @param z Z-index.
      * @param sprite The {@link Sprite} that should be rendered.
      * @param color Shader color ({ R, G, B }).
      */
-    protected void draw(MatrixStack matrices, int x, int y, int z, Sprite sprite, float[] color) {
+    protected void draw(MatrixStack matrices, int x, int y, Sprite sprite, float[] color) {
         RenderSystem.setShaderColor(color[0], color[1], color[2], 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        DrawableHelper.drawTexture(matrices, x, y, z, sprite.u, sprite.v, sprite.width, sprite.height, TEXTURE_SIZE, TEXTURE_SIZE);
+
+        DrawableHelper.drawTexture(matrices, x, y, 0, sprite.u, sprite.v, sprite.width, sprite.height, TEXTURE_SIZE, TEXTURE_SIZE);
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     /**

@@ -67,7 +67,7 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
         }
     }
 
-    @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableDepthTest()V", shift = At.Shift.BEFORE))
+    @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0, shift = At.Shift.AFTER))
     private void drawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
         if (this.isInteracting && this.interactedSlots.size() > 1 && this.interactedSlots.contains(slot)) {
             fill(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, -2130706433);
