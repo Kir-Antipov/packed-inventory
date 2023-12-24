@@ -108,7 +108,7 @@ public interface TooltipProviderContext {
     static TooltipProviderContext of(@Nullable TooltipText text, Optional<TooltipData> data) {
         MinecraftClient client = MinecraftClient.getInstance();
         PlayerEntity player = client.player;
-        TooltipContext context = client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL;
+        TooltipContext context = client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.BASIC;
         return TooltipProviderContext.of(text, data, player, context);
     }
 

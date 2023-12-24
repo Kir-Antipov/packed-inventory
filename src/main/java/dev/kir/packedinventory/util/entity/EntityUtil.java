@@ -12,21 +12,23 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryOwner;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkManager;
@@ -44,7 +46,7 @@ import java.util.stream.Stream;
 
 public final class EntityUtil {
     private static final RegistryEntry<DimensionType> FAKE_DIMENSION = new RegistryEntry<>() {
-        private static final RegistryKey<DimensionType> KEY = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, new Identifier("fake:fake"));
+        private static final RegistryKey<DimensionType> KEY = RegistryKey.of(RegistryKeys.DIMENSION_TYPE, new Identifier("fake:fake"));
         private static final DimensionType VALUE = new DimensionType(OptionalLong.empty(), true, false, false, true, 1.0D, false, true, 0, 32, 32, BlockTags.DIRT, new Identifier("fake:fake"), 1, new DimensionType.MonsterSettings(false, false, ConstantIntProvider.ZERO, 0));
 
         @Override
@@ -98,7 +100,7 @@ public final class EntityUtil {
         }
 
         @Override
-        public boolean matchesRegistry(Registry<DimensionType> registry) {
+        public boolean ownerEquals(RegistryEntryOwner<DimensionType> owner) {
             return false;
         }
     };
@@ -165,6 +167,11 @@ public final class EntityUtil {
             }
 
             @Override
+            public FeatureSet getEnabledFeatures() {
+                return FeatureSet.empty();
+            }
+
+            @Override
             public QueryableTickScheduler<Block> getBlockTickScheduler() {
                 return null;
             }
@@ -205,9 +212,15 @@ public final class EntityUtil {
             }
 
             @Override
-            public void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, long seed) {
+            public void playSound(@Nullable PlayerEntity except, double x, double y, double z, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch, long seed) {
 
             }
+
+            @Override
+            public void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch, long seed) {
+
+            }
+
 
             @Override
             public void playSound(@Nullable PlayerEntity except, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {

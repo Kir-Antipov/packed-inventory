@@ -6,10 +6,10 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,13 +30,13 @@ public final class BlockEntityUtil {
     public static Optional<BlockEntityType<?>> getBlockEntityType(Item item) {
         Optional<BlockEntityType<?>> result = BLOCK_ENTITIES_BY_ITEM.get(item);
         if (result == null) {
-            Identifier id = Registry.ITEM.getId(item);
-            BlockEntityType<?> blockEntityType = Registry.BLOCK_ENTITY_TYPE.get(id);
+            Identifier id = Registries.ITEM.getId(item);
+            BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
             if (blockEntityType == null) {
                 String prefix = PREFIXES.stream().filter(id.getPath()::startsWith).findFirst().orElse(null);
                 if (prefix != null) {
                     Identifier noPrefixId = new Identifier(id.getNamespace(), id.getPath().substring(prefix.length()));
-                    blockEntityType = Registry.BLOCK_ENTITY_TYPE.get(noPrefixId);
+                    blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(noPrefixId);
                 }
             }
             result = Optional.ofNullable(blockEntityType);
@@ -48,8 +48,8 @@ public final class BlockEntityUtil {
     public static Consumer<NbtCompound> getBlockEntityItemStackInitializer(Item relevantItem) {
         Consumer<NbtCompound> initializer = ITEM_NBT_INITIALIZERS.get(relevantItem);
         if (initializer == null) {
-            Identifier id = Registry.ITEM.getId(relevantItem);
-            BlockEntityType<?> blockEntityType = Registry.BLOCK_ENTITY_TYPE.get(id);
+            Identifier id = Registries.ITEM.getId(relevantItem);
+            BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
             if (blockEntityType == null) {
                 String idStr = id.toString();
                 initializer = nbt -> nbt.putString("id", idStr);
@@ -66,7 +66,7 @@ public final class BlockEntityUtil {
         if (initializer == null) {
             BlockEntity be = BlockEntityUtil.getInstance(blockEntityType);
             if (be == null) {
-                String id = Registry.ITEM.getId(relevantItem).toString();
+                String id = Registries.ITEM.getId(relevantItem).toString();
                 initializer = nbt -> nbt.putString("id", id);
             } else {
                 initializer = x -> x.copyFrom(be.createNbtWithIdentifyingData());
@@ -103,7 +103,7 @@ public final class BlockEntityUtil {
     }
 
     private static <T extends BlockEntity> T createInstance(BlockEntityType<T> blockEntityType) {
-        Block block = Registry.BLOCK.get(Registry.BLOCK_ENTITY_TYPE.getId(blockEntityType));
+        Block block = Registries.BLOCK.get(Registries.BLOCK_ENTITY_TYPE.getId(blockEntityType));
         return blockEntityType.supports(block.getDefaultState()) ? blockEntityType.instantiate(BlockPos.ORIGIN, block.getDefaultState()) : null;
     }
 

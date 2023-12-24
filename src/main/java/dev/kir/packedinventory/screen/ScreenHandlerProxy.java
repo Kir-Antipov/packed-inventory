@@ -105,8 +105,8 @@ public class ScreenHandlerProxy extends AbstractRecipeScreenHandler<Inventory> {
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity player, int index) {
-        return this.handler.transferSlot(player, index);
+    public ItemStack quickMove(PlayerEntity player, int index) {
+        return this.handler.quickMove(player, index);
     }
 
     @Override

@@ -15,8 +15,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -65,7 +65,7 @@ public final class InventoryValidators {
      * @return Validator that passes when a validation config with the given {@code id} of the provided {@code configClass} exists in {@link PackedInventoryApiConfig} and {@code predicate} returns {@code true}.
      */
     public static <TConfig> InventoryViewer.Validator config(Item item, PackedInventoryApiConfig config, TConfig defaultConfig, Predicate<TConfig> predicate) {
-        return InventoryValidators.config(Registry.ITEM.getId(item), config, defaultConfig, predicate);
+        return InventoryValidators.config(Registries.ITEM.getId(item), config, defaultConfig, predicate);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class InventoryValidators {
      * @return Validator that passes when a validation config with the given {@code id} of the provided {@code configClass} exists in {@link PackedInventoryApiConfig} and {@code predicate} returns {@code true}.
      */
     public static <TConfig> InventoryViewer.Validator config(Item item, PackedInventoryApiConfig config, Class<TConfig> configClass, Predicate<TConfig> predicate) {
-        return InventoryValidators.config(Registry.ITEM.getId(item), config, configClass, predicate);
+        return InventoryValidators.config(Registries.ITEM.getId(item), config, configClass, predicate);
     }
 
     /**

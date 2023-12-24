@@ -2,8 +2,8 @@ package dev.kir.packedinventory.api.v1.config;
 
 import dev.kir.packedinventory.PackedInventory;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -32,7 +32,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the given class with the id of the provided item from the validation config section, if any; otherwise {@code null}.
      */
     default <T> @Nullable T getValidationConfig(Item item, Class<? extends T> validationConfigClass) {
-        return this.getValidationConfig(Registry.ITEM.getId(item), validationConfigClass);
+        return this.getValidationConfig(Registries.ITEM.getId(item), validationConfigClass);
     }
 
     /**
@@ -43,7 +43,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the same class as defaultValidationConfig's one with the id of the provided item from the validation config section, if any; otherwise defaultValidationConfig.
      */
     default <T> T getValidationConfigOrDefault(Item item, T defaultValidationConfig) {
-        return this.getValidationConfigOrDefault(Registry.ITEM.getId(item), defaultValidationConfig);
+        return this.getValidationConfigOrDefault(Registries.ITEM.getId(item), defaultValidationConfig);
     }
 
     /**
@@ -52,7 +52,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of {@link GenericValidationConfig} class with the id of the provided item from the validation config section, if any; otherwise {@link this#getDefaultValidationConfig()}.
      */
     default GenericValidationConfig getValidationConfigOrDefault(Item item) {
-        return this.getValidationConfigOrDefault(Registry.ITEM.getId(item), this.getDefaultValidationConfig());
+        return this.getValidationConfigOrDefault(Registries.ITEM.getId(item), this.getDefaultValidationConfig());
     }
 
     /**
@@ -99,7 +99,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the given class with the id of the provided item from the tooltip config section, if any; otherwise {@code null}.
      */
     default <T> @Nullable T getTooltipConfig(Item item, Class<? extends T> tooltipConfigClass) {
-        return this.getTooltipConfig(Registry.ITEM.getId(item), tooltipConfigClass);
+        return this.getTooltipConfig(Registries.ITEM.getId(item), tooltipConfigClass);
     }
 
     /**
@@ -110,7 +110,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the same class as defaultTooltipConfig's one with the id of the provided item from the tooltip config section, if any; otherwise defaultTooltipConfig.
      */
     default <T> T getTooltipConfigOrDefault(Item item, T defaultTooltipConfig) {
-        return this.getTooltipConfigOrDefault(Registry.ITEM.getId(item), defaultTooltipConfig);
+        return this.getTooltipConfigOrDefault(Registries.ITEM.getId(item), defaultTooltipConfig);
     }
 
     /**
@@ -119,7 +119,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of {@link GenericTooltipConfig} class with the id of the provided item from the tooltip config section, if any; otherwise {@link this#getDefaultTooltipConfig()}.
      */
     default GenericTooltipConfig getTooltipConfigOrDefault(Item item) {
-        return this.getTooltipConfigOrDefault(Registry.ITEM.getId(item), this.getDefaultTooltipConfig());
+        return this.getTooltipConfigOrDefault(Registries.ITEM.getId(item), this.getDefaultTooltipConfig());
     }
 
     /**
@@ -162,7 +162,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the same class as defaultValue's one with the id of the provided item from the specified config section, if any; otherwise defaultValue.
      */
     default <T> T getOrDefault(Item item, ConfigSection section, T defaultValue) {
-        return this.getOrDefault(Registry.ITEM.getId(item), section, defaultValue);
+        return this.getOrDefault(Registries.ITEM.getId(item), section, defaultValue);
     }
 
     /**
@@ -188,7 +188,7 @@ public interface PackedInventoryApiConfig {
      * @return Entry of the given class with the id of the provided item from the specified config section, if any; otherwise {@code null}.
      */
     default <T> @Nullable T get(Item item, ConfigSection section, Class<? extends T> entryClass) {
-        return this.get(Registry.ITEM.getId(item), section, entryClass);
+        return this.get(Registries.ITEM.getId(item), section, entryClass);
     }
 
     /**
@@ -313,7 +313,7 @@ public interface PackedInventoryApiConfig {
      * @param <T> Entry type.
      */
     default <T> void register(Item item, ConfigSection section, PackedInventoryConfigEntryHolder<T> configEntryHolder) {
-        this.register(Registry.ITEM.getId(item), section, configEntryHolder);
+        this.register(Registries.ITEM.getId(item), section, configEntryHolder);
     }
 
     /**
