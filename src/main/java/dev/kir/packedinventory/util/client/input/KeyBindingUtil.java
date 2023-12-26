@@ -24,7 +24,7 @@ public final class KeyBindingUtil {
 
         switch (boundKey.getCategory()) {
             case KEYSYM:
-                return InputUtil.isKeyPressed(window.getHandle(), boundKey.getCode());
+                return GLFW.glfwGetKey(window.getHandle(), boundKey.getCode()) == GLFW.GLFW_PRESS;
             case MOUSE:
                 return GLFW.glfwGetMouseButton(window.getHandle(), boundKey.getCode()) == GLFW.GLFW_PRESS;
             default:
