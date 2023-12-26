@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public abstract class KeyValuePair<K, V> implements Map.Entry<K, V> {
     @SuppressWarnings("unchecked")
-    public static <K, V> KeyValuePair<K, V> of (K key, V value) {
+    public static <K, V> KeyValuePair<K, V> of(K key, V value) {
         if (key instanceof Identifier) {
             // Do you want a joke?
             // Java... has... generics!

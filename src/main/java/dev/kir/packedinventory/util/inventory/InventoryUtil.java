@@ -3,7 +3,6 @@ package dev.kir.packedinventory.util.inventory;
 import dev.kir.packedinventory.inventory.CombinedInventory;
 import dev.kir.packedinventory.inventory.ListInventory;
 import dev.kir.packedinventory.util.block.entity.BlockEntityUtil;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
@@ -16,6 +15,7 @@ import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 
 public final class InventoryUtil {
@@ -140,10 +140,6 @@ public final class InventoryUtil {
         return InventoryUtil.canInsert(inventory, slot, stack, direction);
     }
 
-    public static DefaultedList<ItemStack> getInventory(ItemStack stack) {
-        return InventoryUtil.getInventory(stack, InventoryUtil.getInventorySize(stack));
-    }
-
     public static Inventory zip(Inventory inventory) {
         int size = inventory.size();
         DefaultedList<ItemStack> items = DefaultedList.ofSize(size);
@@ -175,13 +171,17 @@ public final class InventoryUtil {
         return zipped;
     }
 
+    public static DefaultedList<ItemStack> getInventory(ItemStack stack) {
+        return InventoryUtil.getInventory(stack, InventoryUtil.getInventorySize(stack));
+    }
+
     public static DefaultedList<ItemStack> getInventory(ItemStack stack, int size) {
         DefaultedList<ItemStack> inventory = DefaultedList.ofSize(size, ItemStack.EMPTY);
         NbtList list = InventoryUtil.getItemsList(stack);
         if (list != null) {
             for (int i = 0; i < list.size(); ++i) {
                 NbtCompound nbt = list.getCompound(i);
-                int slot = nbt.contains(SLOT_KEY) ? (nbt.getByte(SLOT_KEY) & 255) : i;
+                int slot = nbt.contains(SLOT_KEY) ? nbt.getByte(SLOT_KEY) : i;
                 if (slot < inventory.size()) {
                     inventory.set(slot, ItemStack.fromNbt(nbt));
                 }
@@ -191,28 +191,26 @@ public final class InventoryUtil {
     }
 
     private static int getInventorySize(ItemStack stack) {
-        int size = -1;
-        BlockEntityType<?> blockEntityType = BlockEntityUtil.getBlockEntityType(stack.getItem()).orElse(null);
-        if (blockEntityType != null) {
-            size = BlockEntityUtil.getInventorySize(blockEntityType, -1);
+        Optional<Integer> size = BlockEntityUtil.getBlockEntityType(stack.getItem()).flatMap(BlockEntityUtil::getInventorySize);
+        if (size.isPresent()) {
+            return size.get();
         }
 
-        if (size == -1) {
-            int maxSlot = -1;
-            int entryCount = 0;
-            NbtList list = InventoryUtil.getItemsList(stack);
-            if (list != null) {
-                for (NbtElement entry : list) {
-                    if (entry instanceof NbtCompound && ((NbtCompound)entry).contains(SLOT_KEY)) {
-                        maxSlot = Math.max(maxSlot, ((NbtCompound)entry).getByte(SLOT_KEY) & 255);
-                    }
-                    ++entryCount;
-                }
+        NbtList items = InventoryUtil.getItemsList(stack);
+        if (items == null) {
+            return 0;
+        }
+
+        int maxSlot = -1;
+        int entryCount = 0;
+        for (NbtElement item : items) {
+            if (item instanceof NbtCompound && ((NbtCompound)item).contains(SLOT_KEY)) {
+                maxSlot = Math.max(maxSlot, ((NbtCompound)item).getByte(SLOT_KEY));
             }
-            size = maxSlot == -1 ? entryCount : (maxSlot + 1);
+            ++entryCount;
         }
 
-        return size;
+        return maxSlot == -1 ? entryCount : (maxSlot + 1);
     }
 
     private static @Nullable NbtList getItemsList(ItemStack stack) {

@@ -16,7 +16,7 @@ public final class ListInventory implements Inventory {
     }
 
     public static Inventory wrap(DefaultedList<ItemStack> inventory) {
-        if (inventory.size() == 0) {
+        if (inventory.isEmpty()) {
             return EmptyInventory.getInstance();
         }
 
@@ -24,18 +24,21 @@ public final class ListInventory implements Inventory {
     }
 
     public static Inventory wrap(Collection<ItemStack> inventory) {
-        if (inventory.size() == 0) {
+        if (inventory.isEmpty()) {
             return EmptyInventory.getInstance();
         }
 
+        if (inventory instanceof DefaultedList) {
+            return new ListInventory((DefaultedList<ItemStack>)inventory);
+        }
+
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-        int i = -1;
+        int i = 0;
         for (ItemStack stack : inventory) {
-            ++i;
-            if (stack == null) {
-                continue;
+            if (stack != null) {
+                defaultedList.set(i, stack);
             }
-            defaultedList.set(i, stack);
+            ++i;
         }
         return new ListInventory(defaultedList);
     }

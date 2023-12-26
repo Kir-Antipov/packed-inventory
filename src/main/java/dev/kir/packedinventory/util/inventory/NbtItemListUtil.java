@@ -11,10 +11,14 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 
 public final class NbtItemListUtil {
-    private static final Comparator<NbtElement> COMPARATOR = Comparator.comparingInt(x -> x instanceof NbtCompound ? ((NbtCompound)x).getByte(InventoryUtil.SLOT_KEY) : 0);
+    private static final Comparator<NbtElement> SLOT_COMPARATOR = Comparator.comparingInt(x -> x instanceof NbtCompound ? ((NbtCompound)x).getByte(InventoryUtil.SLOT_KEY) : 0);
 
     @SuppressWarnings("unchecked")
     public static void clean(NbtList list) {
+        if (list.getHeldType() != NbtElement.COMPOUND_TYPE) {
+            return;
+        }
+
         Iterator<NbtCompound> iterator = (Iterator<NbtCompound>)(Object)list.iterator();
         while (iterator.hasNext()) {
             NbtCompound nbt = iterator.next();
@@ -26,13 +30,13 @@ public final class NbtItemListUtil {
     }
 
     public static void sort(NbtList list) {
-        list.sort(COMPARATOR);
+        list.sort(SLOT_COMPARATOR);
     }
 
     public static int binarySearch(NbtList list, int slot) {
         NbtCompound target = new NbtCompound();
         target.putInt(InventoryUtil.SLOT_KEY, slot);
-        return Collections.binarySearch(list, target, COMPARATOR);
+        return Collections.binarySearch(list, target, SLOT_COMPARATOR);
     }
 
     public static ItemStack get(NbtList list, int slot) {
@@ -81,7 +85,7 @@ public final class NbtItemListUtil {
             return;
         }
 
-        i = -i - 1;
+        i = ~i;
         if (i >= list.size()) {
             list.add(stackNbt);
         } else {
