@@ -80,6 +80,7 @@ public final class PackedInventoryInventoryViewHandlers {
             Text name = parentInventory.getStack(slot).getName();
             if (inventory instanceof ScreenHandlerFactory) {
                 player.openHandledScreen(new SimpleNamedScreenHandlerFactory((ScreenHandlerFactory)inventory, name));
+                return;
             }
 
             InventoryDependentScreenHandlerFactory genericFactory = InventoryDependentScreenHandlerFactory.genericOfSize(inventory.size());
