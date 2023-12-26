@@ -1,5 +1,8 @@
 package dev.kir.packedinventory.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.kir.packedinventory.api.v1.item.TooltipProviderContext;
 import dev.kir.packedinventory.api.v1.item.TooltipProviderRegistry;
 import dev.kir.packedinventory.api.v1.item.TooltipText;
@@ -13,32 +16,38 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// This mixin should be applied last to function correctly.
+// Therefore, we set its priority to *almost* the maximum possible number.
+// This way, we can be reasonably certain that, in most cases, this mixin will indeed be applied last.
+// However, we still leave some room for mixins that know what they are doing and explicitly require
+// post-application after this one.
 @Environment(EnvType.CLIENT)
-@Mixin(ItemStack.class)
+@Mixin(value = ItemStack.class, priority = Integer.MAX_VALUE - 512)
 abstract class ItemStackMixin {
-    @Inject(method = "getTooltipData", at = @At("RETURN"), cancellable = true)
-    private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> cir) {
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
+    @ModifyReturnValue(method = "getTooltipData", at = @At("RETURN"))
+    private Optional<TooltipData> getTooltipData(Optional<TooltipData> tooltipData) {
         ItemStack it = (ItemStack)(Object)this;
-        TooltipProviderContext tooltipProviderContext = TooltipProviderContext.of(cir.getReturnValue());
-        TooltipProviderRegistry.getInstance().getTooltipData(it, tooltipProviderContext).ifPresent(cir::setReturnValue);
+        TooltipProviderContext tooltipProviderContext = TooltipProviderContext.of(tooltipData);
+        return TooltipProviderRegistry.getInstance().getTooltipData(it, tooltipProviderContext).orElse(tooltipData);
     }
 
-    @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
-    private void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
-        this.beginTooltipSectionAndAddMissingSections(cir.getReturnValue(), TooltipText.Part.UNKNOWN);
+    @SuppressWarnings("unused")
+    @ModifyReturnValue(method = "getTooltip", at = @At("RETURN"))
+    private List<Text> getTooltip(List<Text> tooltip, PlayerEntity player, TooltipContext context) {
+        this.beginTooltipSectionAndAddMissingSections(tooltip, TooltipText.Part.UNKNOWN);
 
         ItemStack it = (ItemStack)(Object)this;
-        List<Text> list = cir.getReturnValue();
-        TooltipText.Builder builder = list instanceof TooltipText.BuilderList ? ((TooltipText.BuilderList)list).asBuilder() : TooltipText.builder(list);
+        TooltipText.Builder builder = tooltip instanceof TooltipText.BuilderList ? ((TooltipText.BuilderList)tooltip).asBuilder() : TooltipText.builder(tooltip);
         TooltipProviderContext tooltipProviderContext = TooltipProviderContext.of(builder.build(), player, context);
-        TooltipProviderRegistry.getInstance().getTooltipText(it, tooltipProviderContext).ifPresent(cir::setReturnValue);
+        return TooltipProviderRegistry.getInstance().getTooltipText(it, tooltipProviderContext).orElse(tooltip);
     }
 
     private void beginTooltipSectionAndAddMissingSections(List<Text> list, TooltipText.Part part) {
@@ -60,10 +69,10 @@ abstract class ItemStackMixin {
         builder.beginSection(part);
     }
 
-    @SuppressWarnings("deprecation")
-    @ModifyVariable(method = "getTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/text/MutableText;formatted(Lnet/minecraft/util/Formatting;)Lnet/minecraft/text/MutableText;", shift = At.Shift.AFTER, ordinal = 0))
-    private List<Text> initTooltipTextBuilder(List<Text> list) {
-        return TooltipText.builder(list).asList();
+    @SuppressWarnings({"deprecation", "unused"})
+    @WrapOperation(method = "getTooltip", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Lists;newArrayList()Ljava/util/ArrayList;", ordinal = 0))
+    private ArrayList<Text> initTooltipTextBuilder(Operation<ArrayList<Text>> listFactory) {
+        return TooltipText.builder(listFactory.call()).asList();
     }
 
     @Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", shift = At.Shift.BEFORE, ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)

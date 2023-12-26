@@ -877,7 +877,7 @@ public final class TooltipText {
     }
 
     @ApiStatus.Internal
-    public static final class BuilderList implements List<Text> {
+    public static final class BuilderList extends ArrayList<Text> {
         private final Builder builder;
 
         private BuilderList(Builder builder) {
@@ -1048,6 +1048,29 @@ public final class TooltipText {
         @Override
         public Stream<Text> parallelStream() {
             return this.builder.list.parallelStream();
+        }
+
+        @Override
+        public void trimToSize() {
+
+        }
+
+        @Override
+        public void ensureCapacity(int minCapacity) {
+
+        }
+
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
+        @Override
+        public Object clone() {
+            return this;
+        }
+
+        @Override
+        protected void removeRange(int fromIndex, int toIndex) {
+            if (toIndex >= fromIndex) {
+                this.subList(fromIndex, toIndex + 1).clear();
+            }
         }
     }
 }
