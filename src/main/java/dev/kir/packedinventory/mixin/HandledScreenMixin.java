@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -41,7 +42,7 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
     @Shadow
     protected @Nullable Slot focusedSlot;
 
-    private boolean isInteracting = false;
+    private KeyBinding activeKeyBinding;
 
     private final Set<Slot> interactedSlots = new LinkedHashSet<>();
 
@@ -57,7 +58,7 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
 
     @Override
     public void handleCustomMouseMoved(double mouseX, double mouseY) {
-        if (!this.isInteracting) {
+        if (this.activeKeyBinding == null) {
             return;
         }
 
@@ -69,20 +70,21 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
 
     @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0, shift = At.Shift.AFTER))
     private void drawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
-        if (this.isInteracting && this.interactedSlots.size() > 1 && this.interactedSlots.contains(slot)) {
+        if (this.activeKeyBinding != null && !this.handler.getCursorStack().isEmpty() && this.interactedSlots.size() > 1 && this.interactedSlots.contains(slot)) {
             fill(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, -2130706433);
         }
     }
 
     @Override
     public void handleCustomKeyPressed(KeyInfo key, double mouseX, double mouseY) {
-        if (!key.matches(PackedInventoryKeyBindings.INTERACT_WITH_ITEM)) {
+        if (key.matches(PackedInventoryKeyBindings.INTERACT_WITH_ITEM)) {
+            this.activeKeyBinding = PackedInventoryKeyBindings.INTERACT_WITH_ITEM;
+        } else {
             return;
         }
 
         this.interactedSlots.clear();
-        this.isInteracting = !this.handler.getCursorStack().isEmpty();
-        if (!this.isInteracting) {
+        if (this.handler.getCursorStack().isEmpty()) {
             return;
         }
 
@@ -94,13 +96,13 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
 
     @Override
     public void handleCustomKeyReleased(KeyInfo key, double mouseX, double mouseY) {
-        if (!key.matches(PackedInventoryKeyBindings.INTERACT_WITH_ITEM)) {
+        if (this.activeKeyBinding == null || !key.matches(this.activeKeyBinding)) {
             return;
         }
 
         List<Integer> slotIndices = this.interactedSlots.stream().map(this.handler.slots::indexOf).filter(x -> x >= 0).toList();
         this.interactedSlots.clear();
-        this.isInteracting = false;
+        this.activeKeyBinding = null;
         if (slotIndices.size() > 1) {
             this.sendBulkEditRequest(slotIndices);
         } else {
