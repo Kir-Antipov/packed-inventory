@@ -33,7 +33,7 @@ public final class PackedInventoryKeyBindings {
     }
 
     private static KeyBinding register(String name, int code) {
-        return register(new KeyBinding(KEY_PATH + name, code, CATEGORY));
+        return register(LocalKeyBinding.create(KEY_PATH + name, code, CATEGORY));
     }
 
     private static KeyBinding register(String name, int code, Runnable action) {
