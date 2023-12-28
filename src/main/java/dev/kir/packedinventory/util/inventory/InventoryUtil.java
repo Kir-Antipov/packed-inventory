@@ -1,5 +1,6 @@
 package dev.kir.packedinventory.util.inventory;
 
+import dev.kir.packedinventory.api.v1.inventory.InventoryAction;
 import dev.kir.packedinventory.inventory.CombinedInventory;
 import dev.kir.packedinventory.inventory.ListInventory;
 import dev.kir.packedinventory.screen.StackReferenceSlot;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class InventoryUtil {
-    public static final int CURSOR_SLOT = -1;
+    public static final int CURSOR_SLOT = InventoryAction.CURSOR_SLOT;
     public static final String ITEMS_KEY = "Items";
     public static final String SLOT_KEY = "Slot";
     public static final String SIZE_KEY = "Size";
