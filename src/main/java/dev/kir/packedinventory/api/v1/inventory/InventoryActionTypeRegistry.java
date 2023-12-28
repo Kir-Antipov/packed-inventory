@@ -10,6 +10,14 @@ import java.util.Optional;
  * {@link InventoryActionType} registry.
  */
 public interface InventoryActionTypeRegistry {
+    /**
+     * @return {@link InventoryActionTypeRegistry} instance.
+     */
+    @ApiStatus.Internal
+    static InventoryActionTypeRegistry getInstance() {
+        return InventoryActionTypeRegistryImpl.INSTANCE;
+    }
+
     Optional<InventoryAction> read(PacketByteBuf buffer);
 
     boolean write(PacketByteBuf buffer, InventoryAction inventoryAction);
