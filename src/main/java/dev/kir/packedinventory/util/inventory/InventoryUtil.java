@@ -2,7 +2,12 @@ package dev.kir.packedinventory.util.inventory;
 
 import dev.kir.packedinventory.inventory.CombinedInventory;
 import dev.kir.packedinventory.inventory.ListInventory;
+import dev.kir.packedinventory.screen.StackReferenceSlot;
 import dev.kir.packedinventory.util.block.entity.BlockEntityUtil;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
@@ -10,20 +15,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class InventoryUtil {
+    public static final int CURSOR_SLOT = -1;
     public static final String ITEMS_KEY = "Items";
     public static final String SLOT_KEY = "Slot";
     public static final String SIZE_KEY = "Size";
     public static final String COUNT_KEY = "Count";
     public static final String BLOCK_ENTITY_TAG_KEY = "BlockEntityTag";
+
+    private static final IntList EMPTY_SLOTS = new IntArrayList();
 
     public static int indexOf(Inventory inventory, ItemStack stack) {
         int size = inventory.size();
@@ -80,6 +90,47 @@ public final class InventoryUtil {
             currentIndex += innerInventory.size();
         }
         return -1;
+    }
+
+    public static int indexOfExtractionSlot(Inventory from, Inventory to, int toSlot) {
+        for (int i = from.size() - 1; i >= 0; i--) {
+            ItemStack fromStack = from.getStack(i);
+            if (fromStack.isEmpty() || InventoryUtil.isSameSlot(from, i, to, toSlot)) {
+                continue;
+            }
+
+            if (InventoryUtil.canInsertOrPartiallyCombine(to, toSlot, fromStack)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int indexOfInsertionSlot(Inventory from, int fromSlot, Inventory to) {
+        int insertionIndex = -1;
+        ItemStack fromStack = from.getStack(fromSlot);
+        int toSize = to.size();
+
+        for (int i = 0; i < toSize; i++) {
+            if (InventoryUtil.isSameSlot(from, fromSlot, to, i)) {
+                continue;
+            }
+
+            if (!InventoryUtil.canInsertOrPartiallyCombine(to, i, fromStack)) {
+                continue;
+            }
+
+            ItemStack toStack = to.getStack(i);
+            if (toStack.isEmpty()) {
+                insertionIndex = insertionIndex == -1 ? i : insertionIndex;
+            }
+            else {
+                return i;
+            }
+        }
+
+        return insertionIndex;
     }
 
     public static boolean isSameSlot(Inventory a, int aSlot, Inventory b, int bSlot) {
@@ -169,6 +220,126 @@ public final class InventoryUtil {
             zipped.add(stack);
         }
         return zipped;
+    }
+
+    public static boolean transfer(Inventory from, Inventory to) {
+        boolean success = true;
+        int size = from.size();
+
+        for (int i = 0; i < size; i++) {
+            if (!from.getStack(i).isEmpty()) {
+                success &= InventoryUtil.transfer(from, i, to, -1);
+            }
+        }
+
+        return success;
+    }
+
+    public static boolean transfer(Inventory from, IntList fromSlots, Inventory to) {
+        for (IntListIterator iterator = fromSlots.iterator(); iterator.hasNext(); ) {
+            int fromSlot = iterator.nextInt();
+            if (InventoryUtil.transfer(from, fromSlot, to, -1)) {
+                iterator.remove();
+            }
+        }
+
+        return fromSlots.isEmpty();
+    }
+
+    public static boolean transfer(Inventory from, Inventory to, IntList toSlots) {
+        for (IntListIterator iterator = toSlots.iterator(); iterator.hasNext(); ) {
+            int toSlot = iterator.nextInt();
+            if (InventoryUtil.transfer(from, -1, to, toSlot)) {
+                iterator.remove();
+            }
+        }
+
+        return toSlots.isEmpty();
+    }
+
+    public static boolean transfer(Inventory from, int fromSlot, Inventory to) {
+        return InventoryUtil.transfer(from, fromSlot, to, -1);
+    }
+
+    public static boolean transfer(Inventory from, Inventory to, int toSlot) {
+        return InventoryUtil.transfer(from, -1, to, toSlot);
+    }
+
+    public static boolean transfer(Inventory from, int fromSlot, Inventory to, int toSlot) {
+        if (fromSlot < 0 && toSlot < 0) {
+            return InventoryUtil.transfer(from, to);
+        }
+
+        int originalFromSlot = fromSlot;
+        int originalToSlot = toSlot;
+
+        fromSlot = fromSlot >= 0 ? fromSlot : InventoryUtil.indexOfExtractionSlot(from, to, toSlot);
+        toSlot = toSlot >= 0 ? toSlot : InventoryUtil.indexOfInsertionSlot(from, fromSlot, to);
+        if (fromSlot < 0 || toSlot < 0) {
+            return false;
+        }
+
+        ItemStack fromStack = from.getStack(fromSlot);
+        ItemStack toStack = to.getStack(toSlot);
+        if (!InventoryUtil.canInsertOrPartiallyCombine(to, toSlot, fromStack)) {
+            return false;
+        }
+
+        if (toStack.isEmpty()) {
+            toStack = fromStack.copy();
+            fromStack.setCount(0);
+        } else {
+            int d = Math.min(toStack.getMaxCount() - toStack.getCount(), fromStack.getCount());
+            fromStack.decrement(d);
+            toStack.increment(d);
+        }
+        to.setStack(toSlot, toStack);
+
+        if (fromStack.isEmpty()) {
+            from.removeStack(fromSlot);
+        } else {
+            from.setStack(fromSlot, fromStack);
+        }
+
+        boolean isToStackFilled = originalFromSlot >= 0 || !toStack.isStackable() || toStack.getCount() == toStack.getMaxCount();
+        if (fromStack.isEmpty() && isToStackFilled) {
+            return true;
+        }
+
+        return InventoryUtil.transfer(from, originalFromSlot, to, originalToSlot);
+    }
+
+    public static void drop(Inventory inventory, PlayerEntity owner) {
+        int size = inventory.size();
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = inventory.removeStack(i);
+            if (!stack.isEmpty()) {
+                owner.dropItem(stack, true);
+            }
+        }
+    }
+
+    public static Inventory getPlayerInventoryAndNormalizeSlots(PlayerEntity player, IntList slots) {
+        return InventoryUtil.getPlayerInventoryAndNormalizeSlots(player, slots, EMPTY_SLOTS);
+    }
+
+    public static Inventory getPlayerInventoryAndNormalizeSlots(PlayerEntity player, IntList primarySlots, IntList secondarySlots) {
+        List<Slot> slots = player.currentScreenHandler.slots;
+        int slotCount = slots.size();
+
+        boolean hasCursorSlot = primarySlots.contains(CURSOR_SLOT) || secondarySlots.contains(CURSOR_SLOT);
+        List<Slot> primarySlotHandlers = primarySlots.intStream().mapToObj(x -> x >= 0 && x < slotCount ? slots.get(x) : null).toList();
+        List<Slot> secondarySlotHandlers = secondarySlots.intStream().mapToObj(x -> x >= 0 && x < slotCount ? slots.get(x) : null).toList();
+        Stream<Slot> slotHandlers = Stream.concat(Stream.concat(primarySlotHandlers.stream(), secondarySlotHandlers.stream()), Stream.ofNullable(hasCursorSlot ? StackReferenceSlot.ofCursorStack(player.currentScreenHandler) : null));
+        Set<Inventory> inventories = slotHandlers.filter(Objects::nonNull).map(x -> x.inventory).collect(Collectors.toCollection(LinkedHashSet::new));
+        Inventory inventory = CombinedInventory.of(inventories);
+        int cursorSlot = inventory.size() - 1;
+
+        primarySlots.clear();
+        secondarySlots.clear();
+        primarySlotHandlers.stream().mapToInt(x -> x == null ? cursorSlot : (InventoryUtil.firstIndexOf(inventory, x.inventory) + x.getIndex())).forEach(primarySlots::add);
+        secondarySlotHandlers.stream().mapToInt(x -> x == null ? cursorSlot : (InventoryUtil.firstIndexOf(inventory, x.inventory) + x.getIndex())).forEach(secondarySlots::add);
+        return inventory;
     }
 
     public static DefaultedList<ItemStack> getInventory(ItemStack stack) {
