@@ -29,6 +29,22 @@ public interface InventoryAction {
         return new DefaultInventoryAction(slots);
     }
 
+    static InventoryAction transfer(int fromSlot, int toSlot) {
+        return InventoryAction.transfer(IntList.of(fromSlot), IntList.of(toSlot), InventoryTransferOptions.NONE);
+    }
+
+    static InventoryAction transfer(int fromSlot, int toSlot, EnumSet<InventoryTransferOptions> options) {
+        return InventoryAction.transfer(IntList.of(fromSlot), IntList.of(toSlot), options);
+    }
+
+    static InventoryAction transfer(List<Integer> fromSlots, List<Integer> toSlots) {
+        return InventoryAction.transfer(fromSlots, toSlots, InventoryTransferOptions.NONE);
+    }
+
+    static InventoryAction transfer(List<Integer> fromSlots, List<Integer> toSlots, EnumSet<InventoryTransferOptions> options) {
+        return new TransferInventoryAction(fromSlots, toSlots, options);
+    }
+
     static InventoryAction drop(int slot) {
         return InventoryAction.drop(IntList.of(slot));
     }

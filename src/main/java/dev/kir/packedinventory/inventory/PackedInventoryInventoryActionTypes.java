@@ -10,10 +10,15 @@ import net.minecraft.util.Identifier;
 
 public final class PackedInventoryInventoryActionTypes {
     private static InventoryActionTypeRegistry.Entry<?> DEFAULT;
+    private static InventoryActionTypeRegistry.Entry<?> TRANSFER;
     private static InventoryActionTypeRegistry.Entry<?> DROP;
 
     public static InventoryActionTypeRegistry.Entry<?> getDefault() {
         return DEFAULT;
+    }
+
+    public static InventoryActionTypeRegistry.Entry<?> getTransfer() {
+        return TRANSFER;
     }
 
     public static InventoryActionTypeRegistry.Entry<?> getDrop() {
@@ -23,6 +28,7 @@ public final class PackedInventoryInventoryActionTypes {
     @SuppressWarnings("unused")
     public static void init(InventoryActionTypeRegistry registry, PackedInventoryApiConfig config) {
         DEFAULT = register(registry, "default", InventoryActionTypes.DEFAULT);
+        TRANSFER = register(registry, "transfer", InventoryActionTypes.TRANSFER);
         DROP = register(registry, "drop", InventoryActionTypes.DROP);
     }
 

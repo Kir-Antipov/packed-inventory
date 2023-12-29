@@ -1,14 +1,17 @@
 package dev.kir.packedinventory.client.input;
 
 import dev.kir.packedinventory.PackedInventory;
-import dev.kir.packedinventory.api.v1.networking.PackedInventoryEditRequest;
+import dev.kir.packedinventory.api.v1.inventory.InventoryAction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.OptionalInt;
 
 @Environment(EnvType.CLIENT)
 public final class PackedInventoryKeyBindings {
@@ -27,9 +30,19 @@ public final class PackedInventoryKeyBindings {
 
     private static void requestEdit() {
         PlayerEntity player = MinecraftClient.getInstance().player;
-        if (player != null) {
-            PackedInventoryEditRequest.sendToServer(player.getInventory().selectedSlot);
+        if (player == null) {
+            return;
         }
+
+        PlayerInventory playerInventory = player.getInventory();
+        int selectedSlot = playerInventory.selectedSlot;
+
+        OptionalInt screenHandlerSlot = player.currentScreenHandler.getSlotIndex(playerInventory, selectedSlot);
+        if (screenHandlerSlot.isEmpty()) {
+            return;
+        }
+
+        InventoryAction.handle(screenHandlerSlot.getAsInt()).invoke();
     }
 
     private static KeyBinding register(String name, int code) {
