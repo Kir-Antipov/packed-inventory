@@ -19,11 +19,15 @@ public final class PackedInventoryKeyBindings {
     private static final String KEY_PATH = "key." + PackedInventory.MOD_ID + ".";
 
     public static final KeyBinding INTERACT_WITH_ITEM;
+    public static final KeyBinding INTERACT_WITH_ITEM_MODIFIER;
+    public static final KeyBinding EXTRACT_FROM_ITEM;
     public static final KeyBinding INVERT_TOOLTIP_VISIBILITY;
     public static final KeyBinding INVERT_TOOLTIP_COMPACT_MODE;
 
     static {
         INTERACT_WITH_ITEM = register("interact_with_item", GLFW.GLFW_KEY_K, PackedInventoryKeyBindings::requestEdit);
+        INTERACT_WITH_ITEM_MODIFIER = register("interact_with_item_modifier", GLFW.GLFW_KEY_LEFT_CONTROL);
+        EXTRACT_FROM_ITEM = register("extract_from_item", GLFW.GLFW_KEY_L);
         INVERT_TOOLTIP_VISIBILITY = register("invert_tooltip_visibility", GLFW.GLFW_KEY_LEFT_SHIFT);
         INVERT_TOOLTIP_COMPACT_MODE = register("invert_tooltip_compact_mode", GLFW.GLFW_KEY_C);
     }
