@@ -28,4 +28,12 @@ public interface InventoryAction {
     static InventoryAction handle(List<Integer> slots) {
         return new DefaultInventoryAction(slots);
     }
+
+    static InventoryAction drop(int slot) {
+        return InventoryAction.drop(IntList.of(slot));
+    }
+
+    static InventoryAction drop(List<Integer> slots) {
+        return new DropInventoryAction(slots);
+    }
 }
