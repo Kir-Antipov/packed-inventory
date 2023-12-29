@@ -1,5 +1,6 @@
 package dev.kir.packedinventory.networking;
 
+import dev.kir.packedinventory.api.v1.networking.InventoryActionRequest;
 import dev.kir.packedinventory.api.v1.networking.PackedInventoryBulkEditRequest;
 import dev.kir.packedinventory.api.v1.networking.PackedInventoryEditRequest;
 import dev.kir.packedinventory.api.v1.networking.TooltipSyncRequest;
@@ -11,6 +12,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 public final class PackedInventoryPackets {
     public static void init() {
         TooltipSyncRequest.registerServerReceiver(ServerPlayNetworking::registerGlobalReceiver);
+        InventoryActionRequest.registerServerReceiver(ServerPlayNetworking::registerGlobalReceiver);
         PackedInventoryEditRequest.registerServerReceiver(ServerPlayNetworking::registerGlobalReceiver);
         PackedInventoryBulkEditRequest.registerServerReceiver(ServerPlayNetworking::registerGlobalReceiver);
     }
