@@ -1,6 +1,7 @@
 package dev.kir.packedinventory.api.v1.inventory;
 
 import dev.kir.packedinventory.api.v1.networking.InventoryActionRequest;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,4 +20,12 @@ public interface InventoryAction {
     boolean invoke(ServerPlayerEntity player);
 
     InventoryActionType<?> getType();
+
+    static InventoryAction handle(int slot) {
+        return InventoryAction.handle(IntList.of(slot));
+    }
+
+    static InventoryAction handle(List<Integer> slots) {
+        return new DefaultInventoryAction(slots);
+    }
 }
