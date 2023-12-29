@@ -1,6 +1,7 @@
 package dev.kir.packedinventory.api.v1;
 
 import dev.kir.packedinventory.api.v1.config.PackedInventoryApiConfig;
+import dev.kir.packedinventory.api.v1.inventory.InventoryActionTypeRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryValidationFailureHandlerRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryViewHandlerRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryViewerRegistry;
@@ -45,4 +46,12 @@ public interface PackedInventoryInitializer {
      * @param config {@link PackedInventoryApiConfig} instance.
      */
     default void registerTooltipSyncDataProviders(TooltipSyncDataProviderRegistry registry, PackedInventoryApiConfig config) { }
+
+    /**
+     * Registers {@link dev.kir.packedinventory.api.v1.inventory.InventoryActionType}s.
+     *
+     * @param registry {@link InventoryActionTypeRegistry} instance.
+     * @param config {@link PackedInventoryApiConfig} instance.
+     */
+    default void registerInventoryActionTypes(InventoryActionTypeRegistry registry, PackedInventoryApiConfig config) { }
 }

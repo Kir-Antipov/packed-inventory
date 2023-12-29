@@ -3,6 +3,7 @@ package dev.kir.packedinventory;
 import dev.kir.packedinventory.api.v1.PackedInventoryClientInitializer;
 import dev.kir.packedinventory.api.v1.PackedInventoryInitializer;
 import dev.kir.packedinventory.api.v1.config.PackedInventoryApiConfig;
+import dev.kir.packedinventory.api.v1.inventory.InventoryActionTypeRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryValidationFailureHandlerRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryViewHandlerRegistry;
 import dev.kir.packedinventory.api.v1.inventory.InventoryViewerRegistry;
@@ -12,6 +13,7 @@ import dev.kir.packedinventory.client.gui.tooltip.PackedInventoryTooltipComponen
 import dev.kir.packedinventory.client.item.PackedInventoryTooltipProviders;
 import dev.kir.packedinventory.config.PackedInventoryConfig;
 import dev.kir.packedinventory.client.input.PackedInventoryKeyBindings;
+import dev.kir.packedinventory.inventory.PackedInventoryInventoryActionTypes;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryValidationFailureHandlers;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryViewHandlers;
 import dev.kir.packedinventory.inventory.PackedInventoryInventoryViewers;
@@ -47,6 +49,7 @@ public class PackedInventory implements ModInitializer, ClientModInitializer, Pa
             initializer.registerInventoryViewHandlers(InventoryViewHandlerRegistry.getInstance(), CONFIG);
             initializer.registerInventoryValidationFailureHandlers(InventoryValidationFailureHandlerRegistry.getInstance(), CONFIG);
             initializer.registerTooltipSyncDataProviders(TooltipSyncDataProviderRegistry.getInstance(), CONFIG);
+            initializer.registerInventoryActionTypes(InventoryActionTypeRegistry.getInstance(), CONFIG);
         }
     }
 
@@ -80,6 +83,11 @@ public class PackedInventory implements ModInitializer, ClientModInitializer, Pa
     @Override
     public void registerTooltipSyncDataProviders(TooltipSyncDataProviderRegistry registry, PackedInventoryApiConfig config) {
         PackedInventoryTooltipSyncDataProviders.init(registry, config);
+    }
+
+    @Override
+    public void registerInventoryActionTypes(InventoryActionTypeRegistry registry, PackedInventoryApiConfig config) {
+        PackedInventoryInventoryActionTypes.init(registry, config);
     }
 
     @Override
