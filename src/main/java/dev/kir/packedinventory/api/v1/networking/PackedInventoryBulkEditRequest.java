@@ -1,34 +1,30 @@
 package dev.kir.packedinventory.api.v1.networking;
 
-import com.mojang.datafixers.util.Either;
 import dev.kir.packedinventory.PackedInventory;
-import dev.kir.packedinventory.api.v1.FailureReason;
-import dev.kir.packedinventory.inventory.CombinedInventory;
-import dev.kir.packedinventory.inventory.StackReferenceInventory;
-import dev.kir.packedinventory.util.inventory.InventoryUtil;
+import dev.kir.packedinventory.api.v1.inventory.InventoryAction;
+import dev.kir.packedinventory.api.v1.inventory.InventoryTransferOptions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntImmutableList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
  * A class that can be used to send inventory bulk edit requests.
+ * @deprecated Use {@link InventoryActionRequest} instead.
  */
+@Deprecated(since = "0.3.0", forRemoval = true)
 public final class PackedInventoryBulkEditRequest {
     /**
      * Identifier of this request.
@@ -38,7 +34,7 @@ public final class PackedInventoryBulkEditRequest {
     /**
      * Cursor stack slot index.
      */
-    public static final int CURSOR_SLOT = PackedInventoryEditRequest.CURSOR_SLOT;
+    public static final int CURSOR_SLOT = InventoryAction.CURSOR_SLOT;
 
     /**
      * Sends a bulk edit request for items in the specified slots of the player's inventory.
@@ -46,7 +42,7 @@ public final class PackedInventoryBulkEditRequest {
      */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(List<Integer> slots) {
-        PackedInventoryBulkEditRequest.sendToServer(slots, false);
+        ActionType.DEFAULT.toInventoryAction(slots, IntList.of(CURSOR_SLOT), false).ifPresent(InventoryAction::invoke);
     }
 
     /**
@@ -56,7 +52,7 @@ public final class PackedInventoryBulkEditRequest {
      */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(List<Integer> slots, boolean isHandledScreenSlots) {
-        PackedInventoryBulkEditRequest.sendToServer(ActionType.DEFAULT, slots, isHandledScreenSlots);
+        ActionType.DEFAULT.toInventoryAction(slots, IntList.of(CURSOR_SLOT), isHandledScreenSlots).ifPresent(InventoryAction::invoke);
     }
 
     /**
@@ -67,7 +63,7 @@ public final class PackedInventoryBulkEditRequest {
      */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(ActionType actionType, List<Integer> slots, boolean isHandledScreenSlots) {
-        PackedInventoryBulkEditRequest.sendToServer(actionType, slots, IntList.of(CURSOR_SLOT), isHandledScreenSlots);
+        actionType.toInventoryAction(slots, IntList.of(CURSOR_SLOT), isHandledScreenSlots).ifPresent(InventoryAction::invoke);
     }
 
     /**
@@ -79,7 +75,7 @@ public final class PackedInventoryBulkEditRequest {
      */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(ActionType actionType, int primarySlotIndex, List<Integer> secondarySlotIndices, boolean isHandledScreenSlots) {
-        PackedInventoryBulkEditRequest.sendToServer(actionType, IntList.of(primarySlotIndex), secondarySlotIndices, isHandledScreenSlots);
+        actionType.toInventoryAction(IntList.of(primarySlotIndex), secondarySlotIndices, isHandledScreenSlots).ifPresent(InventoryAction::invoke);
     }
 
     /**
@@ -91,175 +87,23 @@ public final class PackedInventoryBulkEditRequest {
      */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(ActionType actionType, List<Integer> primarySlotIndices, List<Integer> secondarySlotIndices, boolean isHandledScreenSlots) {
-        if (!ClientPlayNetworking.canSend(ID)) {
-            return;
-        }
-
-        PacketByteBuf buffer = PacketByteBufs.create();
-        buffer.writeEnumConstant(actionType);
-        buffer.writeBoolean(isHandledScreenSlots);
-        buffer.writeIntList(asIntList(primarySlotIndices));
-        buffer.writeIntList(asIntList(secondarySlotIndices));
-        ClientPlayNetworking.send(ID, buffer);
+        actionType.toInventoryAction(primarySlotIndices, secondarySlotIndices, isHandledScreenSlots).ifPresent(InventoryAction::invoke);
     }
 
     private static void execute(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         ActionType actionType = buf.readEnumConstant(ActionType.class);
         boolean isHandledScreenSlot = buf.readBoolean();
-        IntList primarySlotIndices = buf.readIntList();
-        IntList secondarySlotIndices = buf.readIntList();
+        List<Integer> primarySlotIndices = normalizeSlots(buf.readIntList(), isHandledScreenSlot);
+        List<Integer> secondarySlotIndices = normalizeSlots(buf.readIntList(), isHandledScreenSlot);
 
-        Inventory inventory;
-        IntList primarySlots;
-        IntList secondarySlots;
-        if (isHandledScreenSlot) {
-            List<Slot> slots = player.currentScreenHandler.slots;
-            int slotCount = slots.size();
-
-            boolean hasCursorSlot = primarySlotIndices.contains(CURSOR_SLOT);
-            List<Slot> primarySlotHandlers = primarySlotIndices.intStream().mapToObj(x -> x >= 0 && x < slotCount ? slots.get(x) : null).toList();
-            if (!hasCursorSlot && primarySlotHandlers.stream().allMatch(Objects::isNull)) {
-                return;
-            }
-            List<Slot> secondarySlotHandlers = secondarySlotIndices.intStream().mapToObj(x -> x >= 0 && x < slotCount ? slots.get(x) : null).toList();
-            hasCursorSlot = hasCursorSlot || secondarySlotIndices.contains(CURSOR_SLOT);
-            Set<Inventory> inventories = new LinkedHashSet<>(3);
-            for (Slot primarySlotHandler : primarySlotHandlers) {
-                if (primarySlotHandler != null) {
-                    inventories.add(primarySlotHandler.inventory);
-                }
-            }
-            for (Slot secondarySlotHandler : secondarySlotHandlers) {
-                if (secondarySlotHandler != null) {
-                    inventories.add(secondarySlotHandler.inventory);
-                }
-            }
-            if (hasCursorSlot) {
-                inventories.add(StackReferenceInventory.ofCursorStack(player.currentScreenHandler));
-            }
-            inventory = CombinedInventory.of(inventories);
-            int cursorSlot = inventory.size() - 1;
-            primarySlots = new IntArrayList(primarySlotHandlers.size());
-            for (Slot slotHandler : primarySlotHandlers) {
-                int slot = slotHandler == null ? cursorSlot : (InventoryUtil.firstIndexOf(inventory, slotHandler.inventory) + slotHandler.getIndex());
-                primarySlots.add(slot);
-            }
-            secondarySlots = new IntArrayList(secondarySlotHandlers.size());
-            for (Slot slotHandler : secondarySlotHandlers) {
-                int slot = slotHandler == null ? cursorSlot : (InventoryUtil.firstIndexOf(inventory, slotHandler.inventory) + slotHandler.getIndex());
-                secondarySlots.add(slot);
-            }
-        } else {
-            boolean hasCursorSlot = primarySlotIndices.contains(CURSOR_SLOT) || secondarySlotIndices.contains(CURSOR_SLOT);
-            inventory = hasCursorSlot ? CombinedInventory.of(player.getInventory(), StackReferenceInventory.ofCursorStack(player.playerScreenHandler)) : player.getInventory();
-            int cursorSlot = inventory.size() - 1;
-            primarySlots = new IntArrayList(primarySlotIndices.size());
-            for (int i = 0; i < primarySlotIndices.size(); ++i) {
-                int slotIndex = primarySlotIndices.getInt(i);
-                primarySlots.add(slotIndex == CURSOR_SLOT ? cursorSlot : slotIndex);
-            }
-            secondarySlots = new IntArrayList(secondarySlotIndices.size());
-            for (int i = 0; i < secondarySlotIndices.size(); ++i) {
-                int slotIndex = secondarySlotIndices.getInt(i);
-                secondarySlots.add(slotIndex == CURSOR_SLOT ? cursorSlot : slotIndex);
-            }
+        if (actionType == ActionType.QUICK_TRANSFER && primarySlotIndices.contains(CURSOR_SLOT) && secondarySlotIndices.stream().anyMatch(i -> !player.getInventory().getStack(i).isEmpty())) {
+            List<Integer> tmp = primarySlotIndices;
+            primarySlotIndices = secondarySlotIndices;
+            secondarySlotIndices = tmp;
         }
 
-        switch (actionType) {
-            case DEFAULT:
-                server.execute(() -> executeDefaultAction(inventory, primarySlots, player));
-                break;
-            case QUICK_TRANSFER:
-                server.execute(() -> executeQuickTransferAction(inventory, primarySlots, secondarySlots, player));
-                break;
-            case DROP:
-                server.execute(() -> executeDropAction(inventory, primarySlots, player));
-                break;
-        }
-    }
-
-    private static void executeDefaultAction(Inventory inventory, IntList slots, ServerPlayerEntity player) {
-        executeAction(inventory, slots, player, (view, slot) -> {
-            PackedInventoryEditRequest.handleView(view, inventory, slot, player);
-            return true;
-        });
-    }
-
-    private static void executeQuickTransferAction(Inventory inventory, IntList primarySlots, IntList secondarySlots, ServerPlayerEntity player) {
-        boolean shouldExtract = secondarySlots.intStream().anyMatch(x -> inventory.getStack(x).isEmpty());
-        executeAction(inventory, primarySlots, player, (view, slot) -> {
-            executeQuickTransferAction(inventory, view, secondarySlots, shouldExtract);
-            return secondarySlots.isEmpty();
-        });
-    }
-
-    private static void executeQuickTransferAction(Inventory inventory, Inventory view, IntList secondarySlots, boolean shouldExtract) {
-        for (int i = 0; i < secondarySlots.size(); ++i) {
-            int slot = secondarySlots.getInt(i);
-            if (inventory.getStack(slot).isEmpty() != shouldExtract) {
-                continue;
-            }
-
-            Inventory from;
-            int fromSlot;
-            Inventory to;
-            int toSlot;
-            if (shouldExtract) {
-                from = view;
-                fromSlot = -1;
-                to = inventory;
-                toSlot = slot;
-            } else {
-                from = inventory;
-                fromSlot = slot;
-                to = view;
-                toSlot = -1;
-            }
-            PackedInventoryEditRequest.handleQuickView(from, fromSlot, to, toSlot);
-        }
-    }
-
-    private static void executeDropAction(Inventory inventory, IntList slots, ServerPlayerEntity player) {
-        executeAction(inventory, slots, player, (view, slot) -> {
-            PackedInventoryEditRequest.handleDropView(view, player);
-            return false;
-        });
-    }
-
-    private static IntList asIntList(List<Integer> ints) {
-        return ints instanceof IntList ? (IntList)ints : new IntImmutableList(ints);
-    }
-
-    private static void executeAction(Inventory inventory, IntList slots, ServerPlayerEntity player, BiFunction<Inventory, Integer, Boolean> viewHandler) {
-        boolean succeed = false;
-        int lastSlot = -1;
-        FailureReason lastFailure = null;
-        for (int i = 0; i < slots.size(); ++i) {
-            int slot = slots.getInt(i);
-            Optional<Either<Inventory, FailureReason>> optionalView = PackedInventoryEditRequest.getView(inventory, slot, player);
-            if (optionalView.isEmpty()) {
-                continue;
-            }
-
-            Either<Inventory, FailureReason> view = optionalView.get();
-            if (view.left().isPresent()) {
-                if (viewHandler.apply(view.left().get(), slot)) {
-                    return;
-                }
-
-                succeed = true;
-                continue;
-            }
-
-            if (view.right().isPresent()) {
-                lastSlot = slot;
-                lastFailure = view.right().get();
-            }
-        }
-
-        if (!succeed && lastFailure != null) {
-            PackedInventoryEditRequest.handleFailure(lastFailure, inventory, lastSlot, player);
-        }
+        actionType.toInventoryAction(primarySlotIndices, secondarySlotIndices, false)
+            .ifPresent(action -> server.execute(() -> action.invoke(player)));
     }
 
     /**
@@ -268,6 +112,15 @@ public final class PackedInventoryBulkEditRequest {
      */
     public static void registerServerReceiver(BiFunction<Identifier, ServerPlayNetworking.PlayChannelHandler, Boolean> receiver) {
         receiver.apply(ID, PackedInventoryBulkEditRequest::execute);
+    }
+
+    private static List<Integer> normalizeSlots(List<Integer> slots, boolean isHandledScreenSlots) {
+        if (isHandledScreenSlots) {
+            return slots;
+        }
+
+        final int HOTBAR_START = 36;
+        return IntArrayList.toList(slots.stream().mapToInt(x -> x + (x >= 0 && x <= 9 ? HOTBAR_START : 0)));
     }
 
     /**
@@ -288,6 +141,17 @@ public final class PackedInventoryBulkEditRequest {
          * Contents of the selected inventory views will be dropped into the world.
          */
         DROP;
+
+        /**
+         * @return An equivalent of this action type instantiated with the specified arguments.
+         */
+        Optional<InventoryAction> toInventoryAction(List<Integer> primarySlotIndices, List<Integer> secondarySlotIndices, boolean isHandledScreenSlots) {
+            return Optional.of(switch (this) {
+                case DEFAULT -> InventoryAction.handle(normalizeSlots(primarySlotIndices, isHandledScreenSlots));
+                case QUICK_TRANSFER -> InventoryAction.transfer(normalizeSlots(primarySlotIndices, isHandledScreenSlots), normalizeSlots(secondarySlotIndices, isHandledScreenSlots), EnumSet.of(InventoryTransferOptions.PREFER_INSERTION));
+                case DROP -> InventoryAction.drop(normalizeSlots( primarySlotIndices, isHandledScreenSlots));
+            });
+        }
 
         /**
          * @return An equivalent of this bulk action type instance applicable to {@link PackedInventoryEditRequest}, if any; otherwise, {@link Optional#empty()}.
