@@ -47,6 +47,9 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
     protected int y;
 
     @Shadow
+    protected int playerInventoryTitleY;
+
+    @Shadow
     protected @Final ScreenHandler handler;
 
     @Shadow
@@ -58,6 +61,11 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
 
     private HandledScreenMixin(Text title) {
         super(title);
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"), require = 0)
+    private void init(CallbackInfo ci) {
+        this.playerInventoryTitleY = 73;
     }
 
     @Shadow

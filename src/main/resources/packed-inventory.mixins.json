@@ -8,6 +8,9 @@
     "MouseMixin",
     "KeyboardMixin",
     "KeyBindingMixin",
+    "GenericContainerScreenHandlerMixin",
+    "GenericContainerScreenMixin",
+    "ShulkerBoxScreenMixin",
     "HandledScreenMixin"
   ],
   "injectors": {
