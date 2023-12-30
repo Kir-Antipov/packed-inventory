@@ -1,6 +1,8 @@
 {
   "key.categories.packed-inventory": "Packed Inventory",
   "key.packed-inventory.interact_with_item": "Взаємодія з предметом",
+  "key.packed-inventory.interact_with_item_modifier": "Перемикання режиму взаємодії",
+  "key.packed-inventory.extract_from_item": "Вилучити з предмета",
   "key.packed-inventory.invert_tooltip_visibility": "Інвертувати підказки",
   "key.packed-inventory.invert_tooltip_compact_mode": "Інвертувати компактні підказки",
 

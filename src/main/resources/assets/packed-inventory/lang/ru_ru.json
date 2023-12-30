@@ -1,6 +1,8 @@
 {
   "key.categories.packed-inventory": "Packed Inventory",
   "key.packed-inventory.interact_with_item": "Взаимодействовать с предметом",
+  "key.packed-inventory.interact_with_item_modifier": "Инвертировать режим взаимодействия",
+  "key.packed-inventory.extract_from_item": "Достать из предета",
   "key.packed-inventory.invert_tooltip_visibility": "Инвертировать подсказки",
   "key.packed-inventory.invert_tooltip_compact_mode": "Инвертировать компактные подсказки",
 

@@ -1,6 +1,8 @@
 {
   "key.categories.packed-inventory": "Packed Inventory",
-  "key.packed-inventory.interact_with_item": "Interact with an item",
+  "key.packed-inventory.interact_with_item": "Interact with item",
+  "key.packed-inventory.interact_with_item_modifier": "Toggle interaction mode (hold)",
+  "key.packed-inventory.extract_from_item": "Extract from item",
   "key.packed-inventory.invert_tooltip_visibility": "Invert tooltip visibility (hold)",
   "key.packed-inventory.invert_tooltip_compact_mode": "Invert tooltip compact mode (hold)",
 

@@ -1,6 +1,8 @@
 {
   "key.categories.packed-inventory": "Packed Inventory",
   "key.packed-inventory.interact_with_item": "아이템 상호작용",
+  "key.packed-inventory.interact_with_item_modifier": "상호작용 모드 전환 (누르고 있기)",
+  "key.packed-inventory.extract_from_item": "항목에서 추출",
   "key.packed-inventory.invert_tooltip_visibility": "툴팁 가시성 반전 (누르고 있기)",
   "key.packed-inventory.invert_tooltip_compact_mode": "툴팁 압축 모드 반전 (누르고 있기)",
 
