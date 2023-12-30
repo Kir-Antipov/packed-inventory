@@ -18,8 +18,19 @@ public interface InventoryActionTypeRegistry {
         return InventoryActionTypeRegistryImpl.INSTANCE;
     }
 
+    /**
+     * Attempts to read an inventory action from the provided buffer.
+     * @param buffer The buffer to read from.
+     * @return An {@link Optional} containing the read inventory action if successful; otherwise, an empty {@link Optional}.
+     */
     Optional<InventoryAction> read(PacketByteBuf buffer);
 
+    /**
+     * Writes an inventory action to the provided buffer.
+     * @param buffer The buffer to write to.
+     * @param inventoryAction The inventory action to write.
+     * @return {@code true} if the write was successful; otherwise, {@code false}.
+     */
     boolean write(PacketByteBuf buffer, InventoryAction inventoryAction);
 
     /**
@@ -29,6 +40,12 @@ public interface InventoryActionTypeRegistry {
      */
     <T extends InventoryAction> Entry<T> register(Entry<T> entry);
 
+    /**
+     * Registers a new inventory action type with the specified identifier.
+     * @param id The identifier for the new inventory action type.
+     * @param inventoryActionType The inventory action type to register.
+     * @return Registered entry.
+     */
     default <T extends InventoryAction> Entry<T> register(Identifier id, InventoryActionType<T> inventoryActionType) {
         return this.register(new Entry<>() {
             @Override
@@ -43,6 +60,11 @@ public interface InventoryActionTypeRegistry {
         });
     }
 
+    /**
+     * Unregisters an existing inventory action type with the specified identifier.
+     * @param id The identifier for the inventory action type to unregister.
+     * @return {@code true} if the unregister operation was successful; otherwise, {@code false}.
+     */
     boolean unregister(Identifier id);
 
     /**

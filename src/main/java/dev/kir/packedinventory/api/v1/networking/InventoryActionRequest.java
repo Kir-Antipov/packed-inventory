@@ -16,9 +16,19 @@ import net.minecraft.util.Identifier;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+/**
+ * Represents a request to perform an inventory action.
+ */
 public final class InventoryActionRequest {
+    /**
+     * The identifier of this request.
+     */
     public static final Identifier ID = PackedInventory.locate("inventory_action_request");
 
+    /**
+     * Sends an inventory action request to the server.
+     * @param inventoryAction The inventory action to send.
+     */
     @Environment(EnvType.CLIENT)
     public static void sendToServer(InventoryAction inventoryAction) {
         if (!ClientPlayNetworking.canSend(ID)) {
@@ -43,6 +53,10 @@ public final class InventoryActionRequest {
         server.execute(() -> inventoryAction.invoke(player));
     }
 
+    /**
+     * Registers a server receiver for this request.
+     * @param receiver The receiver to be registered.
+     */
     public static void registerServerReceiver(BiFunction<Identifier, ServerPlayNetworking.PlayChannelHandler, Boolean> receiver) {
         receiver.apply(ID, (server, player, __, buffer, ___) -> execute(server, player, buffer));
     }
