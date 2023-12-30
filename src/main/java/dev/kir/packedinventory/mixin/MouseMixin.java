@@ -87,7 +87,7 @@ abstract class MouseMixin {
 
     @WrapOperation(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0))
     private void unlockCursor(long window, int cursorState, double x, double y, Operation<Void> setCursor) {
-        final float MAX_SECONDS_SINCE_LAST_LOCK = 0.05F;
+        final float MAX_SECONDS_SINCE_LAST_LOCK = 0.1F;
 
         float currentTime = (float)GlfwUtil.getTime();
         float secondsSinceLastLock = currentTime - this.lastMouseLockTime;
