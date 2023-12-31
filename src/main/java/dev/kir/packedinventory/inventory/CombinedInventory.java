@@ -103,7 +103,7 @@ public final class CombinedInventory implements Inventory {
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {
-        return this.inventories.stream().anyMatch(x -> x.canPlayerUse(player));
+        return this.inventories.stream().allMatch(x -> x.canPlayerUse(player));
     }
 
     @Override

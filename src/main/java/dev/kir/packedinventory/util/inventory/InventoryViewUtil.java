@@ -115,30 +115,60 @@ public final class InventoryViewUtil {
         for (IntListIterator iterator = fromSlots.iterator(); iterator.hasNext(); ) {
             int fromSlot = iterator.nextInt();
             Inventory fromView = InventoryViewUtil.tryGetView(inventory, fromSlot, player).orElse(null);
-            if (fromView == null) {
+            if (fromView == null || !fromView.canPlayerUse(player)) {
                 continue;
             }
 
-            if (InventoryUtil.transfer(fromView, inventory, toSlots)) {
+            if (InventoryViewUtil.transferFromView(fromView, inventory, toSlots, player)) {
                 iterator.remove();
             }
         }
         return fromSlots.isEmpty();
     }
 
+    private static boolean transferFromView(Inventory from, Inventory to, IntList toSlots, PlayerEntity player) {
+        for (IntListIterator iterator = toSlots.iterator(); iterator.hasNext(); ) {
+            if (!from.canPlayerUse(player)) {
+                return false;
+            }
+
+            int toSlot = iterator.nextInt();
+            if (InventoryUtil.transfer(from, -1, to, toSlot)) {
+                iterator.remove();
+            }
+        }
+
+        return toSlots.isEmpty();
+    }
+
     private static boolean transferToViews(Inventory inventory, IntList fromSlots, IntList toSlots, PlayerEntity player) {
         for (IntListIterator iterator = toSlots.iterator(); iterator.hasNext(); ) {
             int toSlot = iterator.nextInt();
             Inventory toView = InventoryViewUtil.tryGetView(inventory, toSlot, player).orElse(null);
-            if (toView == null) {
+            if (toView == null || !toView.canPlayerUse(player)) {
                 continue;
             }
 
-            if (InventoryUtil.transfer(inventory, fromSlots, toView)) {
+            if (InventoryViewUtil.transferToView(inventory, fromSlots, toView, player)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean transferToView(Inventory from, IntList fromSlots, Inventory to, PlayerEntity player) {
+        for (IntListIterator iterator = fromSlots.iterator(); iterator.hasNext(); ) {
+            if (!from.canPlayerUse(player)) {
+                return false;
+            }
+
+            int fromSlot = iterator.nextInt();
+            if (InventoryUtil.transfer(from, fromSlot, to, -1)) {
+                iterator.remove();
+            }
+        }
+
+        return fromSlots.isEmpty();
     }
 
     public static boolean dropViews(Inventory inventory, IntList slots, PlayerEntity player) {
