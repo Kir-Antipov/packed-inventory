@@ -45,7 +45,6 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
 
         this.getNbtList().ifPresent(NbtItemListUtil::clean);
         this.getNbtList().ifPresent(NbtItemListUtil::sort);
-        this.removeItemListIfEmpty();
 
         this.items = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
     }
@@ -89,18 +88,6 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
         return nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE);
     }
 
-    protected void removeItemListIfEmpty() {
-        NbtCompound nbt = BlockItem.getBlockEntityNbt(this.stack);
-        if (nbt != null && (!nbt.contains(InventoryUtil.ITEMS_KEY, NbtElement.LIST_TYPE) || nbt.getList(InventoryUtil.ITEMS_KEY, NbtElement.COMPOUND_TYPE).size() == 0)) {
-            this.stack.removeSubNbt(InventoryUtil.BLOCK_ENTITY_TAG_KEY);
-        }
-    }
-
-    private void refreshNbtList() {
-        this.removeItemListIfEmpty();
-        this.inventory.markDirty();
-    }
-
     @Override
     public Text getDisplayName() {
         return this.stack.getName();
@@ -133,7 +120,7 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
             this.items.set(slot, stack);
             if (isEmptyNbtListItemStack && stack.isEmpty()) {
                 this.getNbtList().ifPresent(list -> NbtItemListUtil.remove(list, slot));
-                this.refreshNbtList();
+                this.inventory.markDirty();
             }
         }
         return stack;
@@ -151,7 +138,7 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
             this.items.set(slot, ItemStack.EMPTY);
             ((NbtListItemStack)stack).unbound();
         }
-        this.refreshNbtList();
+        this.inventory.markDirty();
         return removed;
     }
 
@@ -168,7 +155,7 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
             removed = stack.copy();
             ((NbtListItemStack)stack).unbound();
             this.getNbtList().ifPresent(list -> NbtItemListUtil.remove(list, slot));
-            this.refreshNbtList();
+            this.inventory.markDirty();
         }
         return removed;
     }
@@ -237,7 +224,6 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
             this.removeStack(i);
         }
         this.getNbtList().ifPresent(NbtList::clear);
-        this.removeItemListIfEmpty();
     }
 
     @Override
