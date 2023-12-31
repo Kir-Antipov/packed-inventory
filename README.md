@@ -38,7 +38,9 @@ To store items inside an inventory-providing item, you can either:
  - Pick up the item(s) to be stored and press `k` on the inventory-providing item.
 
 To retrieve items from an inventory-providing item:
- - Pick up the inventory-providing item and press `k` on the empty slot(s) to extract the item(s) to. Note that items are accessed in a LIFO *(Last In, First Out)* manner.
+ - Pick up the inventory-providing item and press `k` on the empty slot(s) to extract the item(s) to, or
+ - Pick up the inventory-providing item and press `l` or `ctrl + k` on the slot(s) to extract the item(s) to, or
+ - Press `l` or `ctrl + k` on the inventory-providing item(s) to extract the items from.
 
 To dump all items from an inventory-providing item out into the world:
  - Pick up the inventory-providing item, move it outside of the inventory frame, and press `k`.
@@ -70,7 +72,9 @@ Key binds can be configured just like vanilla ones:
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `Interact with an item` | Interacts with the item in the active hotbar slot. Alternatively, if the inventory screen is open, interacts with the item the mouse is hovering over. Depending on the context, this action can either: <ul><li>Open a screen associated with the selected item,</li><li>Store an item inside the selected inventory-providing item,</li><li>Retrieve an item from the selected inventory-providing item, or</li><li>Dump all the items stored in the selected inventory-providing item out into the world</li></ul> | `k` |
+| `Interact with item` | Interacts with the item in the active hotbar slot. Alternatively, if the inventory screen is open, interacts with the item the mouse is hovering over. Depending on the context, this action can either: <ul><li>Open a screen associated with the selected item,</li><li>Store an item inside the selected inventory-providing item,</li><li>Retrieve an item from the selected inventory-providing item, or</li><li>Dump all the items stored in the selected inventory-providing item out into the world</li></ul> | `k` |
+| `Toggle interaction mode (hold)` | Makes the `Interact with item` key bind behave like `Extract from item` | `Left Control` |
+| `Extract from item` | Extracts an item from the selected inventory-providing item | `l` |
 | `Invert tooltip visibility (hold)` | Inverts tooltip visibility while pressed | `Left Shift` |
 | `Invert tooltip compact mode (hold)` | Inverts tooltip compact mode while pressed | `c` |
 
@@ -490,10 +494,11 @@ Requirements:
 
  - Minecraft `1.19.x`
  - Fabric Loader `>=0.14.0`
+ - Fabric API `>=0.75.3`
 
 You can download the mod from:
 
- - [GitHub Releases](https://github.com/Kir-Antipov/packed-inventory/releases/latest) <sup><sub>(recommended)</sub></sup>
+ - [GitHub Releases](https://github.com/Kir-Antipov/packed-inventory/releases/latest)
  - [Modrinth](https://modrinth.com/mod/packed-inventory)
  - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/packed-inventory)
  - [GitHub Actions](https://github.com/Kir-Antipov/packed-inventory/actions/workflows/build-artifacts.yml) *(these builds may be unstable, but they represent the actual state of the development)*
