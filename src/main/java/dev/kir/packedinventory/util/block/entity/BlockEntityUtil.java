@@ -55,14 +55,8 @@ public final class BlockEntityUtil {
             return initializer;
         }
 
-        Identifier id = Registries.ITEM.getId(relevantItem);
-        BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(id);
-        if (blockEntityType != null) {
-            return BlockEntityUtil.getBlockEntityItemStackInitializer(blockEntityType, relevantItem);
-        }
-
-        String idStr = id.toString();
-        initializer = nbt -> nbt.putString("id", idStr);
+        String id = Registries.ITEM.getId(relevantItem).toString();
+        initializer = nbt -> nbt.putString("id", id);
 
         ITEM_NBT_INITIALIZERS.put(relevantItem, initializer);
         return initializer;
@@ -74,13 +68,7 @@ public final class BlockEntityUtil {
             return initializer;
         }
 
-        BlockEntity blockEntity = BlockEntityUtil.getInstance(blockEntityType);
-        if (blockEntity == null) {
-            String id = Registries.ITEM.getId(relevantItem).toString();
-            initializer = nbt -> nbt.putString("id", id);
-        } else {
-            initializer = x -> x.copyFrom(blockEntity.createNbtWithIdentifyingData());
-        }
+        initializer = BlockEntityUtil.getBlockEntityItemStackInitializer(relevantItem);
 
         BLOCK_ENTITY_NBT_INITIALIZERS.put(blockEntityType, initializer);
         return initializer;
