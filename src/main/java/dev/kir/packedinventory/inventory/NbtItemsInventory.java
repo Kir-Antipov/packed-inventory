@@ -137,6 +137,7 @@ public abstract class NbtItemsInventory implements Inventory, NbtListProvider, N
         if (stack.isEmpty() && stack instanceof NbtListItemStack) {
             this.items.set(slot, ItemStack.EMPTY);
             ((NbtListItemStack)stack).unbound();
+            this.getNbtList().ifPresent(list -> NbtItemListUtil.remove(list, slot));
         }
         this.inventory.markDirty();
         return removed;
