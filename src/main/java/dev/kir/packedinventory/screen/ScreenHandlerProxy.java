@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.screen.*;
@@ -195,7 +196,7 @@ public class ScreenHandlerProxy extends AbstractRecipeScreenHandler<Inventory> {
     }
 
     @Override
-    public void fillInputSlots(boolean craftAll, Recipe<?> recipe, ServerPlayerEntity player) {
+    public void fillInputSlots(boolean craftAll, RecipeEntry<?> recipe, ServerPlayerEntity player) {
         if (this.handler instanceof AbstractRecipeScreenHandler) {
             ((AbstractRecipeScreenHandler<?>)this.handler).fillInputSlots(craftAll, recipe, player);
         }
@@ -217,9 +218,9 @@ public class ScreenHandlerProxy extends AbstractRecipeScreenHandler<Inventory> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean matches(Recipe recipe) {
+    public boolean matches(RecipeEntry<? extends Recipe<Inventory>> recipe) {
         if (this.handler instanceof AbstractRecipeScreenHandler) {
-            return ((AbstractRecipeScreenHandler<?>)this.handler).matches(recipe);
+            return ((AbstractRecipeScreenHandler<Inventory>)this.handler).matches(recipe);
         }
         return false;
     }

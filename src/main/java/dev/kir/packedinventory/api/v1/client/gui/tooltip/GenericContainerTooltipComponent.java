@@ -15,12 +15,11 @@ import net.minecraft.util.Identifier;
  */
 @Environment(EnvType.CLIENT)
 public class GenericContainerTooltipComponent implements TooltipComponent {
-    private static final Identifier TEXTURE = new Identifier("textures/gui/container/bundle.png");
+    private static final Identifier BACKGROUND_TEXTURE = new Identifier("container/bundle/background");
     private static final int BORDER_SIZE = 1;
     private static final int VERTICAL_MARGIN = 4;
     private static final int SLOT_WIDTH = 18;
     private static final int SLOT_HEIGHT = 20;
-    private static final int TEXTURE_SIZE = 128;
     private static final float[] TRUE_WHITE = new float[] { 1F, 1F, 1F };
 
     private final Inventory inventory;
@@ -64,7 +63,7 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
     /**
      * @return Number of rows of this {@link TooltipComponent}'s {@link Inventory}.
      */
-    private int getRows() {
+    public int getRows() {
         return this.rows;
     }
 
@@ -73,16 +72,30 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      */
     @Override
     public int getHeight() {
-        return this.getRows() * SLOT_HEIGHT + BORDER_SIZE * 2 + VERTICAL_MARGIN;
+        return GenericContainerTooltipComponent.getLogicalHeight(this.getRows()) + VERTICAL_MARGIN;
     }
 
     /**
      * @param textRenderer A {@link TextRenderer} instance that should be used to measure text width.
-     * @return Height of this {@link TooltipComponent}.
+     * @return Width of this {@link TooltipComponent}.
      */
     @Override
     public int getWidth(TextRenderer textRenderer) {
-        return this.getColumns() * SLOT_WIDTH + BORDER_SIZE * 2;
+        return GenericContainerTooltipComponent.getLogicalWidth(this.getColumns());
+    }
+
+    /**
+     * @return Height of a {@link TooltipComponent} with the specified number of rows.
+     */
+    private static int getLogicalHeight(int rows) {
+        return rows * SLOT_HEIGHT + BORDER_SIZE * 2;
+    }
+
+    /**
+     * @return Width of a {@link TooltipComponent} with the specified number of columns.
+     */
+    private static int getLogicalWidth(int columns) {
+        return columns * SLOT_WIDTH + BORDER_SIZE * 2;
     }
 
     /**
@@ -97,36 +110,38 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
     public void drawItems(TextRenderer textRenderer, int x, int y, DrawContext context) {
         int columns = this.getColumns();
         int rows = this.getRows();
+        float[] color = this.getColor();
+
+        this.drawOutline(context, x, y, columns, rows, color);
 
         for (int rI = 0, i = 0; rI < rows; ++rI) {
             for (int cI = 0; cI < columns; ++cI) {
                 int xS = x + cI * SLOT_WIDTH + BORDER_SIZE;
                 int yS = y + rI * SLOT_HEIGHT + BORDER_SIZE;
-                this.drawSlot(xS, yS, i++, context, textRenderer);
+                this.drawSlot(context, xS, yS, i++, color, textRenderer);
             }
         }
-
-        this.drawOutline(x, y, columns, rows, context);
     }
 
     /**
      * Renders an item located in this {@link TooltipComponent}'s {@link Inventory} at the given index.
      *
+     * @param context The {@link DrawContext} instance.
      * @param index Index of the item that should be rendered.
      * @param x X screen coordinate.
      * @param y Y screen coordinate.
-     * @param context The {@link DrawContext} instance.
+     * @param color Shader color ({ R, G, B }).
      * @param textRenderer A {@link TextRenderer} instance that should be used to render text.
      */
-    protected void drawSlot(int x, int y, int index, DrawContext context, TextRenderer textRenderer) {
+    protected void drawSlot(DrawContext context, int x, int y, int index, float[] color, TextRenderer textRenderer) {
         Inventory inventory = this.getInventory();
         if (index >= inventory.size()) {
-            this.draw(context, x, y, Sprite.BLOCKED_SLOT);
+            this.draw(context, x, y, Sprite.BLOCKED_SLOT, color);
             return;
         }
 
         ItemStack itemStack = inventory.getStack(index);
-        this.draw(context, x, y, Sprite.SLOT);
+        this.draw(context, x, y, Sprite.SLOT, color);
         context.drawItem(itemStack, x + 1, y + 1, index);
         context.drawItemInSlot(textRenderer, itemStack, x + 1, y + 1);
     }
@@ -134,32 +149,20 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
     /**
      * Renders outline.
      *
+     * @param context The {@link DrawContext} instance.
      * @param x X screen coordinate.
      * @param y Y screen coordinate.
      * @param columns Number of columns of this {@link TooltipComponent}'s {@link Inventory}.
      * @param rows Number of rows of this {@link TooltipComponent}'s {@link Inventory}.
-     * @param context The {@link DrawContext} instance.
+     * @param color Shader color ({ R, G, B }).
      */
-    protected void drawOutline(int x, int y, int columns, int rows, DrawContext context) {
-        this.draw(context, x, y, Sprite.BORDER_CORNER_TOP);
-        this.draw(context, x + columns * SLOT_WIDTH + BORDER_SIZE, y, Sprite.BORDER_CORNER_TOP);
+    protected void drawOutline(DrawContext context, int x, int y, int columns, int rows, float[] color) {
+        int width = GenericContainerTooltipComponent.getLogicalWidth(columns);
+        int height = GenericContainerTooltipComponent.getLogicalHeight(rows);
 
-        for (int i = 0; i < columns; ++i) {
-            this.draw(context, x + BORDER_SIZE + i * SLOT_WIDTH, y, Sprite.BORDER_HORIZONTAL_TOP);
-            this.draw(context, x + BORDER_SIZE + i * SLOT_WIDTH, y + rows * SLOT_HEIGHT, Sprite.BORDER_HORIZONTAL_BOTTOM);
-        }
-
-        for (int i = 0; i < rows; ++i) {
-            this.draw(context, x, y + i * SLOT_HEIGHT + BORDER_SIZE, Sprite.BORDER_VERTICAL);
-            this.draw(context, x + columns * SLOT_WIDTH + BORDER_SIZE, y + i * SLOT_HEIGHT + BORDER_SIZE, Sprite.BORDER_VERTICAL);
-        }
-
-        this.draw(context, x, y + rows * SLOT_HEIGHT, Sprite.BORDER_CORNER_BOTTOM);
-        this.draw(context, x + columns * SLOT_WIDTH + BORDER_SIZE, y + rows * SLOT_HEIGHT, Sprite.BORDER_CORNER_BOTTOM);
-    }
-
-    private void draw(DrawContext context, int x, int y, Sprite sprite) {
-        this.draw(context, x, y, sprite, this.getColor());
+        context.setShaderColor(color[0], color[1], color[2], 1.0F);
+        context.drawGuiTexture(BACKGROUND_TEXTURE, x, y, width, height);
+        context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     /**
@@ -173,7 +176,7 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
      */
     protected void draw(DrawContext context, int x, int y, Sprite sprite, float[] color) {
         context.setShaderColor(color[0], color[1], color[2], 1.0F);
-        context.drawTexture(TEXTURE, x, y, 0, sprite.u, sprite.v, sprite.width, sprite.height, TEXTURE_SIZE, TEXTURE_SIZE);
+        context.drawGuiTexture(sprite.texture, x, y, 0, sprite.width, sprite.height);
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
@@ -184,47 +187,17 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
         /**
          * Empty slot sprite.
          */
-        SLOT(0, 0, SLOT_WIDTH, SLOT_HEIGHT),
+        SLOT(new Identifier("container/bundle/slot"), SLOT_WIDTH, SLOT_HEIGHT),
 
         /**
          * Blocked slot sprite.
          */
-        BLOCKED_SLOT(0, 2 * SLOT_HEIGHT, SLOT_WIDTH, SLOT_HEIGHT),
+        BLOCKED_SLOT(new Identifier("container/bundle/blocked_slot"), SLOT_WIDTH, SLOT_HEIGHT);
 
         /**
-         * Vertical border sprite.
+         * Texture id.
          */
-        BORDER_VERTICAL(0, SLOT_WIDTH, BORDER_SIZE, SLOT_HEIGHT),
-
-        /**
-         * Top part of the horizontal border sprite.
-         */
-        BORDER_HORIZONTAL_TOP(0, SLOT_HEIGHT, SLOT_WIDTH, BORDER_SIZE),
-
-        /**
-         * Bottom part of the horizontal border sprite.
-         */
-        BORDER_HORIZONTAL_BOTTOM(0, 3 * SLOT_HEIGHT, SLOT_WIDTH, BORDER_SIZE),
-
-        /**
-         * Top corner border sprite.
-         */
-        BORDER_CORNER_TOP(0, SLOT_HEIGHT, BORDER_SIZE, BORDER_SIZE),
-
-        /**
-         * Bottom corner border sprite.
-         */
-        BORDER_CORNER_BOTTOM(0, 3 * SLOT_HEIGHT, BORDER_SIZE, BORDER_SIZE);
-
-        /**
-         * U value of the sprite.
-         */
-        public final int u;
-
-        /**
-         * V value of the sprite.
-         */
-        public final int v;
+        public final Identifier texture;
 
         /**
          * Width of the sprite.
@@ -236,9 +209,8 @@ public class GenericContainerTooltipComponent implements TooltipComponent {
          */
         public final int height;
 
-        Sprite(int u, int v, int width, int height) {
-            this.u = u;
-            this.v = v;
+        Sprite(Identifier texture, int width, int height) {
+            this.texture = texture;
             this.width = width;
             this.height = height;
         }

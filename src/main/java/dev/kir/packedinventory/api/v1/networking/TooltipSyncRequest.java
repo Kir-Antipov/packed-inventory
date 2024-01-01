@@ -14,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtTagSizeTracker;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -65,7 +66,7 @@ public final class TooltipSyncRequest {
     @Environment(EnvType.CLIENT)
     private static void executeClient(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         ItemStack stack = buf.readItemStack();
-        NbtCompound nbt = buf.readUnlimitedNbt();
+        NbtCompound nbt = (NbtCompound)buf.readNbt(NbtTagSizeTracker.ofUnlimitedBytes());
         client.execute(() -> TooltipProviderRegistry.getInstance().updateTooltipSyncData(stack, TooltipProviderContext.of(), nbt));
     }
 
