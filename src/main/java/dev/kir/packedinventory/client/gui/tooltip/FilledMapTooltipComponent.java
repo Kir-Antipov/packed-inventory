@@ -5,11 +5,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.MapRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.map.MapState;
 
@@ -47,11 +47,12 @@ public final class FilledMapTooltipComponent implements TooltipComponent {
     }
 
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+    public void drawItems(TextRenderer textRenderer, int x, int y, DrawContext context) {
         if (!this.canRenderMap()) {
             return;
         }
 
+        MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(x, y, 0);
         float scale = (float)this.size / FilledMapTooltipData.DEFAULT_MAP_SIZE;

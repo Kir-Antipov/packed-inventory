@@ -31,7 +31,7 @@ abstract class GenericContainerScreenMixin extends HandledScreen<GenericContaine
         this.playerInventoryTitleY = this.backgroundHeight - 93;
     }
 
-    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 1), index = 4, require = 0)
+    @ModifyArg(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 1), index = 4, require = 0)
     private int fixTextureVerticalOffset(int v) {
         return v == 126 ? 127 : v;
     }

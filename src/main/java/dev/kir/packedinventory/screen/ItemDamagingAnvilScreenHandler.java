@@ -25,7 +25,7 @@ public class ItemDamagingAnvilScreenHandler extends AnvilScreenHandler {
     protected ItemStack anvil;
 
     public ItemDamagingAnvilScreenHandler(int syncId, ItemStack anvil, PlayerEntity player) {
-        this(syncId, anvil, player.getInventory(), ItemDamagingAnvilScreenHandler.createContext(player.world, player.getBlockPos()));
+        this(syncId, anvil, player.getInventory(), ItemDamagingAnvilScreenHandler.createContext(player.getWorld(), player.getBlockPos()));
     }
 
     public ItemDamagingAnvilScreenHandler(int syncId, ItemStack anvil, PlayerInventory playerInventory, ScreenHandlerContext context) {

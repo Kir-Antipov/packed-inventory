@@ -10,9 +10,9 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -91,7 +91,7 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
     }
 
     @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0, shift = At.Shift.AFTER))
-    private void drawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
+    private void drawSlot(DrawContext context, Slot slot, CallbackInfo ci) {
         final int SLOT_SIZE = 16;
         final int HIGHLIGHT_RGBA = -2130706433;
 
@@ -100,7 +100,7 @@ abstract class HandledScreenMixin extends Screen implements CustomHandleableScre
         }
 
         if (this.selectedSlots.contains(slot)) {
-            fill(matrices, slot.x, slot.y, slot.x + SLOT_SIZE, slot.y + SLOT_SIZE, HIGHLIGHT_RGBA);
+            context.fill(slot.x, slot.y, slot.x + SLOT_SIZE, slot.y + SLOT_SIZE, HIGHLIGHT_RGBA);
         }
     }
 

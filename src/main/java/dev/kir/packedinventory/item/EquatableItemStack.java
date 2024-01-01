@@ -6,8 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
 
-import java.util.Objects;
-
 public class EquatableItemStack extends ItemStack {
     public EquatableItemStack(ItemConvertible item) {
         super(item);
@@ -37,19 +35,7 @@ public class EquatableItemStack extends ItemStack {
     }
 
     @Override
-    public boolean isEqual(ItemStack stack) {
-        if (this.getCount() != stack.getCount()) {
-            return false;
-        }
-
-        if (!this.isOf(stack.getItem())) {
-            return false;
-        }
-        return Objects.equals(this.getNbt(), stack.getNbt());
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        return obj == this || obj instanceof ItemStack && this.isEqual((ItemStack)obj);
+        return obj == this || obj instanceof ItemStack && ItemStack.areEqual(this, (ItemStack)obj);
     }
 }

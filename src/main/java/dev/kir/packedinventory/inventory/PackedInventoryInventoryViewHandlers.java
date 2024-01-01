@@ -94,7 +94,7 @@ public final class PackedInventoryInventoryViewHandlers {
     private static InventoryViewHandlerRegistry.Entry registerWorkStation(Block workStation, InventoryViewHandlerRegistry registry) {
         return registry.register(
             (__, playerInventory, slot, player) -> {
-                NamedScreenHandlerFactory originalScreenFactory = workStation.createScreenHandlerFactory(workStation.getDefaultState(), player.world, player.getBlockPos());
+                NamedScreenHandlerFactory originalScreenFactory = workStation.createScreenHandlerFactory(workStation.getDefaultState(), player.getWorld(), player.getBlockPos());
                 if (originalScreenFactory == null) {
                     return;
                 }
