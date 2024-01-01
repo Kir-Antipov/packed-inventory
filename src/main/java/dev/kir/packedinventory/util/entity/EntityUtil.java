@@ -39,6 +39,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.entity.EntityLookup;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.tick.QueryableTickScheduler;
+import net.minecraft.world.tick.TickManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,6 +186,11 @@ public final class EntityUtil {
 
             @Override
             public ChunkManager getChunkManager() {
+                return null;
+            }
+
+            @Override
+            public TickManager getTickManager() {
                 return null;
             }
 
